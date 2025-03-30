@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	// Load configuration
 	config, err := config.LoadConfig("config/config.yaml")
 	if err != nil {
 		log.Fatal(err)
@@ -20,17 +21,21 @@ func main() {
 	log.SetReportCaller(true)
 	r := chi.NewRouter()
 
+	// Get port from evnironment or config
 	port := config.Server.Port
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		if p, err := strconv.Atoi(envPort); err == nil {
 			port = p
+		} else {
+			log.Warnf("Invalid PORT environment variable: %s", envPort)
 		}
 	}
-
-	fmt.Printf("Server listening at port %d...\n", port)
 	
-	address := fmt.Sprintf("localhost:%d", port)
+	host := config.Server.Host
+	address := fmt.Sprintf("%s:%d", host, port)
+
+	log.Infof("Server starting on %s...", address)
 	if err:= http.ListenAndServe(address, r); err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 }
