@@ -6,15 +6,21 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/creative-snails/phisio-log-backend-go/config"
 	"github.com/go-chi/chi"
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+	config, err := config.LoadConfig("config/config.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	log.SetReportCaller(true)
 	r := chi.NewRouter()
 
-	port := 5000
+	port := config.Server.Port
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		if p, err := strconv.Atoi(envPort); err == nil {
 			port = p
