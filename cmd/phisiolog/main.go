@@ -7,5 +7,10 @@ import (
 
 func main() {
 	r := chi.NewRouter()
+
+	// Register routes before initializing the server
+	startup.Routes(r)
+
+	// Initialize server
 	startup.Server(r)
 }
