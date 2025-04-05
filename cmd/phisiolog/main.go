@@ -12,7 +12,7 @@ func main() {
 	r := chi.NewRouter()
 
 	// Connect to databse
-	startup.DB()
+	startup.InitializeDB()
 
 	// Register routes before initializing the server
 	startup.Routes(r)
