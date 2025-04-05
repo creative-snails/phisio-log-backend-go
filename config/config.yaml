@@ -1,3 +1,11 @@
 server:
   port: 5000
   host: 'localhost'
+
+database:
+  host: 'localhost'
+  port: 5432
+  name: 'localhost'
+  user: 'postgres'
+  password: 'phisio-log-dev'
+  sslmode: 'disable' # For local development
