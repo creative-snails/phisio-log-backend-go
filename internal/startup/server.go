@@ -19,8 +19,6 @@ func Server(r *chi.Mux) {
 		log.Fatal(err)
 	}
 
-	log.SetReportCaller(true)
-
 	// Get port from evnironment or config
 	port := config.Server.Port
 	if envPort := os.Getenv("PORT"); envPort != "" {
@@ -35,7 +33,7 @@ func Server(r *chi.Mux) {
 	address := fmt.Sprintf("%s:%d", host, port)
 
 	log.Infof("Server starting on %s...", address)
-	if err:= http.ListenAndServe(address, r); err != nil {
+	if err := http.ListenAndServe(address, r); err != nil {
 		log.Fatal(err)
 	}
 }

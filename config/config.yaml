@@ -3,9 +3,9 @@ server:
   host: 'localhost'
 
 database:
-  host: 'localhost'
   port: 5432
-  name: 'localhost'
+  host: 'localhost'
   user: 'postgres'
   password: 'phisio-log-dev'
+  dbname: 'phisiolog'
   sslmode: 'disable' # For local development
