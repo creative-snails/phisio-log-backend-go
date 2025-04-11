@@ -27,27 +27,17 @@ const (
 	Variable	Severity = "variable"
 )
 
+// DB structs
 type UserDB struct {
-	ID		string	`sql:"id"`
-	Name	string	`sql:"name"`
-} 
-type User struct {
-	ID		string	`json:"id"`
-	Name	string	`json:"name"`
-} 
-
+	ID		string	`sql:"id,omitempty"`
+	Name	string	`sql:"name" validate:"required,min=2,max=100"`
+}
 type SymptomDB struct {
-	ID				string		`sql:"id"`
-	HealthRecordID	string		`sql:"health_record_id"`
-	Name			string		`sql:"name"`
-	StartDate		time.Time	`sql:"start_date"`
+	ID				string		`sql:"id,omitempty"`
+	HealthRecordID	string		`sql:"health_record_id" validate:"required,uuid"`
+	Name			string		`sql:"name" validate:"required,min=2,max=200"`
+	StartDate		time.Time	`sql:"start_date" validate:"required"`
 }
-type Symptom struct {
-	ID			string		`json:"id"`
-	Name		string		`json:"name"`
-	StartDate	time.Time	`json:"startDate"`
-}
-
 type MedicalConsultationDB struct {
 	ID				string		`sql:"id"`
 	HealthRecordID	string		`sql:"health_record_id"`
@@ -56,14 +46,6 @@ type MedicalConsultationDB struct {
 	Diagnosis		string		`sql:"diagnosis"`
 	FollowUpActions	[]string	`sql:"follow_up_actions"`
 }
-type MedicalConsultation struct {
-	ID				string		`json:"id"`
-	Consultant		string		`json:"consultant"`
-	Date			time.Time	`json:"date"`
-	Diagnosis		string		`json:"diagnosis"`
-	FollowUpActions	[]string	`json:"followUpActions"`
-}
-
 type HealthRecordDB struct {
 	ID 				string		`sql:"id"`
 	UserID			string		`sql:"user_id"`
@@ -77,6 +59,25 @@ type HealthRecordDB struct {
 	UpdatedAt		time.Time	`sql:"updated_at"`
 }
 
+// API structs
+type User struct {
+	ID		string	`json:"id"`
+	Name	string	`json:"name"`
+} 
+
+type Symptom struct {
+	ID			string		`json:"id"`
+	Name		string		`json:"name"`
+	StartDate	time.Time	`json:"startDate"`
+}
+
+type MedicalConsultation struct {
+	ID				string		`json:"id"`
+	Consultant		string		`json:"consultant"`
+	Date			time.Time	`json:"date"`
+	Diagnosis		string		`json:"diagnosis"`
+	FollowUpActions	[]string	`json:"followUpActions"`
+}
 type HealthRecord struct {
 	ID 						string 					`json:"id"`
 	User 					User					`json:"user"`
