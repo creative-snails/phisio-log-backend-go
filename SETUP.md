@@ -86,3 +86,22 @@ If you try to click save and create the server for PostgreSQL in pgAdmin4 and yo
 ```bash
 sudo -u $(whoami) psql
 ```
+
+## Generate SQL queries
+
+1. Install sqlc using go, run:
+
+   ```bash
+   go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+   ```
+
+2. Using homebrew:
+
+   ```bash
+   brew install sqlc
+   ```
+
+3. Generate queries
+   ```bash
+   sqlc generate
+   ```

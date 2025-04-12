@@ -25,7 +25,6 @@ func NewHealthRecordService(db *sql.DB) *HealthRecordService {
 
 
 func (s *HealthRecordService) Migrate()  {
-	
 	query := `
 		CREATE TABLE IF NOT EXISTS healthRecords (
 			id SERIAL PRIMARY KEY,
@@ -41,7 +40,6 @@ func (s *HealthRecordService) Migrate()  {
 	}
 
 	log.Info("Database migration completed successfully")
-
 }
 
 func (s *HealthRecordService) Create( ctx context.Context, healthRecord *HealthRecord)  {

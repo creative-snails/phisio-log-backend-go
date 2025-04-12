@@ -36,27 +36,27 @@ type SymptomDB struct {
 	ID				string		`sql:"id,omitempty"`
 	HealthRecordID	string		`sql:"health_record_id" validate:"required,uuid"`
 	Name			string		`sql:"name" validate:"required,min=2,max=200"`
-	StartDate		time.Time	`sql:"start_date" validate:"required"`
+	StartDate		time.Time	`sql:"start_date" validate:"omitempty"`
 }
 type MedicalConsultationDB struct {
-	ID				string		`sql:"id"`
-	HealthRecordID	string		`sql:"health_record_id"`
-	Consultant		string		`sql:"consultant"`
-	Date			time.Time	`sql:"date"`
-	Diagnosis		string		`sql:"diagnosis"`
-	FollowUpActions	[]string	`sql:"follow_up_actions"`
+	ID				string		`sql:"id,omitempty"`
+	HealthRecordID	string		`sql:"health_record_id" validate:"required,uuid"`
+	Consultant		string		`sql:"consultant" validate:"required,min=2,max=100"`
+	Date			time.Time	`sql:"date" validate:"required"`
+	Diagnosis		string		`sql:"diagnosis" validate:"required,min=2,max=1000"`
+	FollowUpActions	[]string	`sql:"follow_up_actions" validate:"omitempty,dive,min=2,max=200"`
 }
 type HealthRecordDB struct {
-	ID 				string		`sql:"id"`
-	UserID			string		`sql:"user_id"`
-	ParentRecordID	string		`sql:"parent_record_id"`
-	Description		string		`sql:"description"`
-	Progress		Progress	`sql:"progress"`	
-	Improvement		Improvement	`sql:"improvement"`
-	Severity 		Severity	`sql:"severity"`
-	TreatmentsTried []string 	`sql:"treatments_tried"`
-	CreatedAt		time.Time	`sql:"created_at"`
-	UpdatedAt		time.Time	`sql:"updated_at"`
+	ID 				string		`sql:"id,omitempty"`
+	UserID			string		`sql:"user_id" validate:"required,uuid"`
+	ParentRecordID	string		`sql:"parent_record_id" validate:"omitempty,uuid"`
+	Description		string		`sql:"description" validate:"required,min=10,max=2000"`
+	Progress		Progress	`sql:"progress" validate:"omitempty,oneof=open closed in-progress"`
+	Improvement		Improvement	`sql:"improvement" validate:"omitempty,oneof=improving stable worsening varying"`
+	Severity 		Severity	`sql:"severity" validate:"omitempty,oneof=mild moderate severe variable"`
+	TreatmentsTried []string 	`sql:"treatments_tried" validate:"omitempty,dive,min=2,max=200"`
+	CreatedAt		time.Time	`sql:"created_at,omitempty"`
+	UpdatedAt		time.Time	`sql:"updated_at,omitempty"`
 }
 
 // API structs
