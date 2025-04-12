@@ -1,12 +1,10 @@
 package startup
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 
 	"github.com/creative-snails/phisio-log-backend-go/config"
-	services "github.com/creative-snails/phisio-log-backend-go/internal/services"
 
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
@@ -42,16 +40,6 @@ func InitializeDB() {
 		log.Fatal(err)
 		return
 	}
-
-	healthRecordService := services.NewHealthRecordService(db)
-	healthRecordService.Migrate()
-	
-	ctx := context.Background()
-	healthRecord := &services.HealthRecord{
-		Description: "Patient showed improvement in mobility",
-	}
-
-	healthRecordService.Create(ctx, healthRecord)
 
 	log.Infof("DB starting on %s...", address)
 }

@@ -1,7 +1,7 @@
 version: '2'
 sql:
   - engine: 'postgresql'
-    queries: 'queries/health_records.sql'
+    queries: 'queries/*.sql'
     schema: 'migrations/000001_init_schema.sql'
     gen:
       go:

@@ -15,17 +15,19 @@ import (
 const createHealthRecord = `-- name: CreateHealthRecord :one
 INSERT INTO health_records (
     user_id,
+    parent_record_id,
     description,
     progress,
     improvement,
     severity,
     treatments_tried
-) VALUES ($1, $2, $3, $4, $5, $6)
+) VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id, user_id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at
 `
 
 type CreateHealthRecordParams struct {
 	UserID          uuid.UUID             `json:"userId"`
+	ParentRecordID  uuid.NullUUID         `json:"parentRecordId"`
 	Description     string                `json:"description"`
 	Progress        ProgressEnum          `json:"progress"`
 	Improvement     ImprovementEnum       `json:"improvement"`
@@ -36,6 +38,7 @@ type CreateHealthRecordParams struct {
 func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecordParams) (HealthRecord, error) {
 	row := q.queryRow(ctx, q.createHealthRecordStmt, createHealthRecord,
 		arg.UserID,
+		arg.ParentRecordID,
 		arg.Description,
 		arg.Progress,
 		arg.Improvement,
