@@ -15,10 +15,11 @@ func InitializeDB() (*db.Queries, error) {
 	// Load configuration
 	config, err := config.LoadConfig("config/config.yaml")
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
 
+	log.Infof("Attempting to connect to database at %s:%d", config.Database.Host, config.Database.Port)
     connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", 
 		config.Database.Host, 
 		config.Database.Port, 
@@ -35,6 +36,10 @@ func InitializeDB() (*db.Queries, error) {
 	    return nil, fmt.Errorf("error opening database: %w", err)
 	}
 
+	if err := RunMigrations(dbConn); err != nil {
+		return nil, fmt.Errorf("error running migrations: %w", err)
+	}
+
 	// Verify connextion
 	if err := dbConn.Ping(); err != nil {
 		return nil, fmt.Errorf("error connecting to the database: %w", err)
@@ -43,6 +48,9 @@ func InitializeDB() (*db.Queries, error) {
 	log.Infof("DB starting on %s...", address)
 
 	queries := db.New(dbConn)
+	if queries == nil {
+		return nil, fmt.Errorf("failed to create queries object")
+	}
 
 	return queries, nil
 }

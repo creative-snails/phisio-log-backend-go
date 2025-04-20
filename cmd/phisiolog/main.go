@@ -20,8 +20,15 @@ func main() {
 	}
 	
 	// Register routes before initializing the server
-	services.NewHealthRecordService(queries)
-	h := handlers.NewHandler(&services.HealthRecordService{})
+	healthRecordService := services.NewHealthRecordService(queries)
+	if healthRecordService == nil {
+		log.Fatalf("Failed to create heald record service")
+	}
+
+	h := handlers.NewHandler(healthRecordService)
+	if h == nil {
+		log.Fatal("Failed to create handler")
+	}
 	startup.Routes(r, h)
 
 	// Initialize server
