@@ -8,9 +8,9 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/sqlc-dev/pqtype"
 )
 
 type ImprovementEnum string
@@ -145,14 +145,36 @@ func (ns NullSeverityEnum) Value() (driver.Value, error) {
 }
 
 type HealthRecord struct {
-	ID              uuid.UUID             `json:"id"`
-	UserID          uuid.UUID             `json:"userId"`
-	ParentRecordID  uuid.NullUUID         `json:"parentRecordId"`
-	Description     string                `json:"description"`
-	Progress        ProgressEnum          `json:"progress"`
-	Improvement     ImprovementEnum       `json:"improvement"`
-	Severity        SeverityEnum          `json:"severity"`
-	TreatmentsTried pqtype.NullRawMessage `json:"treatmentsTried"`
-	CreatedAt       sql.NullTime          `json:"createdAt"`
-	UpdatedAt       sql.NullTime          `json:"updatedAt"`
+	ID              uuid.UUID       `json:"id"`
+	UserID          uuid.UUID       `json:"userId"`
+	ParentRecordID  uuid.NullUUID   `json:"parentRecordId"`
+	Description     string          `json:"description"`
+	Progress        ProgressEnum    `json:"progress"`
+	Improvement     ImprovementEnum `json:"improvement"`
+	Severity        SeverityEnum    `json:"severity"`
+	TreatmentsTried []string        `json:"treatmentsTried"`
+	CreatedAt       sql.NullTime    `json:"createdAt"`
+	UpdatedAt       sql.NullTime    `json:"updatedAt"`
+}
+
+type MedicalConsultation struct {
+	ID              uuid.UUID `json:"id"`
+	HealthRecordID  uuid.UUID `json:"healthRecordId"`
+	Consultant      string    `json:"consultant"`
+	Date            time.Time `json:"date"`
+	Diagnosis       string    `json:"diagnosis"`
+	FollowUpActions []string  `json:"followUpActions"`
+}
+
+type Symptom struct {
+	ID             uuid.UUID    `json:"id"`
+	HealthRecordID uuid.UUID    `json:"healthRecordId"`
+	Name           string       `json:"name"`
+	StartDate      sql.NullTime `json:"startDate"`
+}
+
+type User struct {
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	Email string    `json:"email"`
 }

@@ -9,7 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sqlc-dev/pqtype"
+	"github.com/lib/pq"
 )
 
 const createHealthRecord = `-- name: CreateHealthRecord :one
@@ -26,13 +26,13 @@ RETURNING id, user_id, parent_record_id, description, progress, improvement, sev
 `
 
 type CreateHealthRecordParams struct {
-	UserID          uuid.UUID             `json:"userId"`
-	ParentRecordID  uuid.NullUUID         `json:"parentRecordId"`
-	Description     string                `json:"description"`
-	Progress        ProgressEnum          `json:"progress"`
-	Improvement     ImprovementEnum       `json:"improvement"`
-	Severity        SeverityEnum          `json:"severity"`
-	TreatmentsTried pqtype.NullRawMessage `json:"treatmentsTried"`
+	UserID          uuid.UUID       `json:"userId"`
+	ParentRecordID  uuid.NullUUID   `json:"parentRecordId"`
+	Description     string          `json:"description"`
+	Progress        ProgressEnum    `json:"progress"`
+	Improvement     ImprovementEnum `json:"improvement"`
+	Severity        SeverityEnum    `json:"severity"`
+	TreatmentsTried []string        `json:"treatmentsTried"`
 }
 
 func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecordParams) (HealthRecord, error) {
@@ -43,7 +43,7 @@ func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecord
 		arg.Progress,
 		arg.Improvement,
 		arg.Severity,
-		arg.TreatmentsTried,
+		pq.Array(arg.TreatmentsTried),
 	)
 	var i HealthRecord
 	err := row.Scan(
@@ -54,7 +54,7 @@ func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecord
 		&i.Progress,
 		&i.Improvement,
 		&i.Severity,
-		&i.TreatmentsTried,
+		pq.Array(&i.TreatmentsTried),
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -77,7 +77,7 @@ func (q *Queries) GetHealthRecord(ctx context.Context, id uuid.UUID) (HealthReco
 		&i.Progress,
 		&i.Improvement,
 		&i.Severity,
-		&i.TreatmentsTried,
+		pq.Array(&i.TreatmentsTried),
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -107,7 +107,7 @@ func (q *Queries) ListHealthRecords(ctx context.Context, userID uuid.UUID) ([]He
 			&i.Progress,
 			&i.Improvement,
 			&i.Severity,
-			&i.TreatmentsTried,
+			pq.Array(&i.TreatmentsTried),
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
