@@ -6,6 +6,8 @@ import (
 
 	m "github.com/creative-snails/phisio-log-backend-go/internal/models"
 	s "github.com/creative-snails/phisio-log-backend-go/internal/services"
+	t "github.com/creative-snails/phisio-log-backend-go/internal/types"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -19,15 +21,57 @@ func NewHandler(healthRecordService *s.HealthRecordService) *Handler {
 }
 
 func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
-	var req m.CreateHealthRecordRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	var rawReq struct {
+		UserID			string	`json:"userId"`
+		ParentRecordID	string	`json:"parentRecordId,omitempty"`
+		Description		string	`json:"description"`
+		Progress		string	`json:"progress"`
+		Improvement		string	`json:"improvement"`
+		Severity		string	`json:"severity"`
+		TreatmentsTried	[]string	`json:"treatmentsTried"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&rawReq); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
+	}
+
+	req := m.CreateHealthRecordRequest {
+		Description: rawReq.Description,
+		Progress: t.Progress(rawReq.Progress),
+		Improvement: t.Improvement(rawReq.Improvement),
+		Severity: t.Severity(rawReq.Severity),
+		TreatmentsTried: rawReq.TreatmentsTried,
+	}
+
+	userID, err := uuid.Parse(rawReq.UserID)
+	if err != nil {
+		http.Error(w, "Invalid userId format", http.StatusBadRequest)
+		return
+	}
+	req.UserID = userID
+
+	if rawReq.ParentRecordID != "" {
+		parentID, err := uuid.Parse(rawReq.ParentRecordID)
+		if err != nil {
+			http.Error(w, "Invalid parentId format", http.StatusBadRequest)
+			return
+		}
+
+		req.ParentRecordID = uuid.NullUUID{
+			UUID: parentID,
+			Valid: true,
+		}
+	} else {
+		req.ParentRecordID = uuid.NullUUID{
+			Valid: false,
+		}
 	}
 
 	record, err := h.healthRecordService.CreateHealthRecord(r.Context(), &req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -37,6 +81,4 @@ func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 		return
 	}
-
-	
 }
