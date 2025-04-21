@@ -4,19 +4,19 @@ import (
 	"encoding/json"
 	"net/http"
 
-	m "github.com/creative-snails/phisio-log-backend-go/internal/models"
-	s "github.com/creative-snails/phisio-log-backend-go/internal/services"
-	t "github.com/creative-snails/phisio-log-backend-go/internal/types"
+	"github.com/creative-snails/phisio-log-backend-go/internal/models"
+	"github.com/creative-snails/phisio-log-backend-go/internal/services"
+	"github.com/creative-snails/phisio-log-backend-go/internal/types"
 	"github.com/google/uuid"
 )
 
 type Handler struct {
-	healthRecordService s.HealthRecordService
+	healthRecordService services.HealthRecordService
 }
 
-func NewHandler(healthRecordService *s.HealthRecordService) *Handler {
+func NewHandler(healthRecordService services.HealthRecordService) *Handler {
 	return &Handler {
-		healthRecordService: *healthRecordService,
+		healthRecordService: healthRecordService,
 	}
 }
 
@@ -41,11 +41,11 @@ func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 		treatments = rawReq.TreatmentsTried
 	}
 
-	req := m.CreateHealthRecordRequest {
+	req := models.CreateHealthRecordRequest {
 		Description: rawReq.Description,
-		Progress: t.Progress(rawReq.Progress),
-		Improvement: t.Improvement(rawReq.Improvement),
-		Severity: t.Severity(rawReq.Severity),
+		Progress: types.Progress(rawReq.Progress),
+		Improvement: types.Improvement(rawReq.Improvement),
+		Severity: types.Severity(rawReq.Severity),
 		TreatmentsTried: treatments,
 	}
 

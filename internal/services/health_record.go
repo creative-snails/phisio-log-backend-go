@@ -5,21 +5,21 @@ import (
 	"fmt"
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/db"
-	m "github.com/creative-snails/phisio-log-backend-go/internal/models"
+	"github.com/creative-snails/phisio-log-backend-go/internal/models"
 )
 
 
-type HealthRecordService struct {
+type HealthRecordServiceImpl struct {
 	queries *db.Queries
 }
 
-func NewHealthRecordService(queries *db.Queries) *HealthRecordService {
-	return &HealthRecordService{
+func NewHealthRecordService(queries *db.Queries) HealthRecordService {
+	return &HealthRecordServiceImpl{
 		queries: queries,
 	}
 }
 
-func (s *HealthRecordService) CreateHealthRecord(ctx context.Context, req *m.CreateHealthRecordRequest) (db.HealthRecord, error) {
+func (s *HealthRecordServiceImpl) CreateHealthRecord(ctx context.Context, req *models.CreateHealthRecordRequest) (db.HealthRecord, error) {
 	if err := req.Validate(); err != nil {
 		return db.HealthRecord{}, fmt.Errorf("validtion failed: %w", err)
 	}
