@@ -36,12 +36,17 @@ func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	treatments := []string{}
+	if rawReq.TreatmentsTried != nil {
+		treatments = rawReq.TreatmentsTried
+	}
+
 	req := m.CreateHealthRecordRequest {
 		Description: rawReq.Description,
 		Progress: t.Progress(rawReq.Progress),
 		Improvement: t.Improvement(rawReq.Improvement),
 		Severity: t.Severity(rawReq.Severity),
-		TreatmentsTried: rawReq.TreatmentsTried,
+		TreatmentsTried: treatments,
 	}
 
 	userID, err := uuid.Parse(rawReq.UserID)
