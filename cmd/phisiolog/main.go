@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/creative-snails/phisio-log-backend-go/config"
 	"github.com/creative-snails/phisio-log-backend-go/internal/handlers"
 	"github.com/creative-snails/phisio-log-backend-go/internal/services"
 	"github.com/creative-snails/phisio-log-backend-go/internal/startup"
@@ -9,20 +10,25 @@ import (
 )
 
 func main() {
+	// Load configuration
+	config, err := config.LoadConfig("config/config.yaml")
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+	
 	log.SetReportCaller(true)
 	
-	r := chi.NewRouter()
-	
-	// Connect to databse
-	queries, err := startup.InitializeDB()
+	// Connect to database
+	queries, err := startup.InitializeDB(config.Database)
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
-	
+
+	r := chi.NewRouter()
 	// Register routes before initializing the server
 	healthRecordService := services.NewHealthRecordService(queries)
 	if healthRecordService == nil {
-		log.Fatalf("Failed to create heald record service")
+		log.Fatalf("Failed to create health record service")
 	}
 
 	h := handlers.NewHandler(healthRecordService)
@@ -32,7 +38,5 @@ func main() {
 	startup.Routes(r, h)
 
 	// Initialize server
-	startup.Server(r)
-
-
+	startup.Server(r, config.Server)
 }

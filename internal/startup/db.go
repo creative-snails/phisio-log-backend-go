@@ -11,25 +11,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func InitializeDB() (*db.Queries, error) {
-	// Load configuration
-	config, err := config.LoadConfig("config/config.yaml")
-	if err != nil {
-		return nil, fmt.Errorf("failed to load config: %w", err)
-	}
-
-
-	log.Infof("Attempting to connect to database at %s:%d", config.Database.Host, config.Database.Port)
+func InitializeDB(dbc config.DatabaseConfig) (*db.Queries, error) {
+	log.Infof("Attempting to connect to database at %s:%d", dbc.Host, dbc.Port)
     connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", 
-		config.Database.Host, 
-		config.Database.Port, 
-		config.Database.User, 
-		config.Database.Password,
-		config.Database.Dbname,
-		config.Database.Sslmode,
+		dbc.Host, 
+		dbc.Port, 
+		dbc.User, 
+		dbc.Password,
+		dbc.Dbname,
+		dbc.Sslmode,
 	)
 
-	address := fmt.Sprintf("%s:%d", config.Database.Host, config.Database.Port)
+	address := fmt.Sprintf("%s:%d", dbc.Host, dbc.Port)
 
     dbConn, err := sql.Open("postgres", connStr)
 	if err != nil {
