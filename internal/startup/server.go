@@ -12,17 +12,9 @@ import (
 )
 
 
-func Server(r *chi.Mux) {
-	// Load configuration
-	config, err := config.LoadConfig("config/config.yaml")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.SetReportCaller(true)
-
+func Server(r *chi.Mux, sc config.ServerConfig) {
 	// Get port from evnironment or config
-	port := config.Server.Port
+	port := sc.Port
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		if p, err := strconv.Atoi(envPort); err == nil {
 			port = p
@@ -31,11 +23,11 @@ func Server(r *chi.Mux) {
 		}
 	}
 	
-	host := config.Server.Host
+	host := sc.Host
 	address := fmt.Sprintf("%s:%d", host, port)
 
 	log.Infof("Server starting on %s...", address)
-	if err:= http.ListenAndServe(address, r); err != nil {
+	if err := http.ListenAndServe(address, r); err != nil {
 		log.Fatal(err)
 	}
 }
