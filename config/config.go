@@ -6,11 +6,23 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type ServerConfig struct {
+	Port int	 `yaml:"port"`
+	Host string  `yaml:"host"`
+}
+
+type DatabaseConfig struct {
+	Port int        `yaml:"port"`
+	Host string     `yaml:"host"`
+	User string     `yaml:"user"`
+	Password string `yaml:"password"`
+	Dbname string   `yaml:"dbname"`
+	Sslmode string  `yaml:"sslmode"`
+}
+
 type Config struct {
-	Server struct {
-		Port int	 `yaml:"port"`
-		Host string  `yaml:"host"`
-	} `yaml:"server"`
+	Server ServerConfig `yaml:"server"`
+	Database DatabaseConfig `yaml:"database"`
 }
 
 func LoadConfig(configPath string) (*Config, error) {
