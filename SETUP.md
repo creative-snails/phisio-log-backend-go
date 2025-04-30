@@ -1,6 +1,66 @@
-# Setup Instructions
+# Project Setup Instructions
 
-> **Note**: If you encounter a "command not found" or "not recognized" error after installing the `air` package via `go install github.com/air-verse/air@latest` and running `air` in the terminal, it indicates that Go's binary path is not properly configured in your system's PATH environment variable. Follow the instructions below to resolve this issue.
+## Prerequisites
+
+Ensure you have the following installed on your system:
+
+- Docker
+- Docker Compose
+
+## Environment Variables
+
+Create a `.env` file in the root of your project and add the following environment variables:
+
+```env
+SERVER_PORT=5000
+SERVER_HOST=0.0.0.0
+DB_PORT=5432
+DB_HOST=db
+DB_USER=postgres
+DB_PASSWORD=phisio-log-dev
+DB_NAME=phisiolog
+DB_SSLMODE=disable
+```
+
+## Docker Setup
+
+The project uses Docker for containerization. Follow these steps to set up and run the application:
+
+1. **Build and Start Containers**
+      `sh
+   docker-compose up --build
+   `
+
+2. **Access the Application**
+      - The application will be accessible at `http://localhost:5000`.
+
+3. **Database Access**
+      - The PostgreSQL database will be accessible at `localhost:5433`.
+
+## Running the Application
+
+To start developing, ensure the containers are running and then you can begin coding. The application will automatically reload with changes due to the `air` tool.
+
+## Generate SQL queries
+
+1. Install sqlc using go, run:
+
+   ```bash
+   go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+   ```
+
+2. Using homebrew:
+
+   ```bash
+   brew install sqlc
+   ```
+
+3. Generate queries
+   ```bash
+   sqlc generate
+   ```
+
+**Note**: If you encounter a "command not found" or "not recognized" error after installing the `sqlc` package via `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest` and running `sqlc generate` in the terminal, it indicates that Go's binary path is not properly configured in your system's PATH environment variable. Follow the instructions below to resolve this issue.
 
 ## Adding Go binary to PATH [[1]](https://stackoverflow.com/questions/28162577)
 
@@ -36,72 +96,3 @@
    %USERPROFILE%\go\bin
    ```
 8. Click "OK" to save all changes
-
-## Verifying Installation
-
-After setting up the PATH, verify that `air` is accessible by running:
-
-```bash
-air -v
-```
-
-If you haven't installed `air` yet, you can install it using:
-
-```bash
-go install github.com/cosmtrek/air@latest
-```
-
-## PostgreSQL Installation and Setup on macOS
-
-1. If you haven't installed Homebrew yet, you can install it using:
-
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-2. To install PostgreSQL, run:
-
-   ```bash
-   brew install postgresql
-   ```
-
-3. Start the PostgreSQL service with::
-
-   ```bash
-   brew services start postgresql
-   ```
-
-4. Verify the installation by running:
-
-   ```bash
-   psql --version
-   ```
-
-## Resolving "FATAL: role 'postgres' does not exist" Error in pgAdmin4
-
-If you try to click save and create the server for PostgreSQL in pgAdmin4 and you get an error saying that the role does not exist, follow these steps to resolve it. Use the username returned in the terminal as the username.
-
-**Switch to the PostgreSQL User**: Use the following command to switch to the PostgreSQL user. If you installed PostgreSQL using Homebrew, it might use your macOS username instead of `postgres`. You can find your username by running `whoami` in the terminal.
-
-```bash
-sudo -u $(whoami) psql
-```
-
-## Generate SQL queries
-
-1. Install sqlc using go, run:
-
-   ```bash
-   go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-   ```
-
-2. Using homebrew:
-
-   ```bash
-   brew install sqlc
-   ```
-
-3. Generate queries
-   ```bash
-   sqlc generate
-   ```
