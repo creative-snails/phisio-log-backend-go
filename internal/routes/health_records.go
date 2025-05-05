@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -21,10 +22,16 @@ func HealthRecords(r chi.Router, handler *handlers.Handler) {
         Content: "Hello!",
     },
 }
-		message, err := services.TextGen(messages)
+		message, err := services.GenAI(messages, "text")
 		if err != nil {
-			fmt.Errorf("failed to generate a response: %w", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
 		}
+
+		fmt.Printf("Message: %s",message)
 
 		w.Write([]byte(message))
 	})
