@@ -22,7 +22,7 @@ func NewHandler(healthRecordService services.HealthRecordService) *Handler {
 
 func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 	var rawReq struct {
-		UserID			string	`json:"userId"`
+		// UserID			string	`json:"userId"`
 		ParentRecordID	string	`json:"parentRecordId,omitempty"`
 		Description		string	`json:"description"`
 		Progress		string	`json:"progress"`
@@ -49,12 +49,12 @@ func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 		TreatmentsTried: treatments,
 	}
 
-	userID, err := uuid.Parse(rawReq.UserID)
-	if err != nil {
-		http.Error(w, "Invalid userId format", http.StatusBadRequest)
-		return
-	}
-	req.UserID = userID
+	// userID, err := uuid.Parse(rawReq.UserID)
+	// if err != nil {
+	// 	http.Error(w, "Invalid userId format", http.StatusBadRequest)
+	// 	return
+	// }
+	// req.UserID = userID
 
 	if rawReq.ParentRecordID != "" {
 		parentID, err := uuid.Parse(rawReq.ParentRecordID)

@@ -1,6 +1,6 @@
 -- name: CreateHealthRecord :one
 INSERT INTO health_records (
-    user_id,
+    -- user_id,
     parent_record_id,
     description,
     progress,

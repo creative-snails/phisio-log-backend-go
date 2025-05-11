@@ -62,7 +62,7 @@ CREATE TABLE users (
 
 CREATE TABLE health_records (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL,
+    -- user_id UUID NOT NULL,
     parent_record_id UUID NULL,
     description VARCHAR(2000) NOT NULL CHECK (length(description) >= 10), 
     progress progress_enum NOT NULL DEFAULT 'open',
@@ -71,7 +71,7 @@ CREATE TABLE health_records (
     treatments_tried VARCHAR(200)[] CHECK (validate_string_array(treatments_tried)),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
+    -- CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_parent FOREIGN KEY (parent_record_id) REFERENCES health_records(id)
 );
 

@@ -25,7 +25,7 @@ func (s *HealthRecordServiceImpl) CreateHealthRecord(ctx context.Context, req *m
 	}
 
 	params := db.CreateHealthRecordParams{
-		UserID:				req.UserID,
+		// UserID:				req.UserID,
 		ParentRecordID: 	req.ParentRecordID,
 		Description: 		req.Description,
 		Progress: 			db.ProgressEnum(req.Progress),	

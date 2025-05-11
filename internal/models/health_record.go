@@ -9,7 +9,7 @@ import (
 )
 
 type CreateHealthRecordRequest struct {
-	UserID			uuid.UUID			`json:"userId" validate:"required,uuid"`
+	// UserID			uuid.UUID			`json:"userId" validate:"required,uuid"`
 	ParentRecordID	uuid.NullUUID		`json:"parentRecordId" validate:"omitempty,uuid"`
 	Description		string				`json:"description" validate:"required,min=10,max=2000"`
 	Progress		types.Progress		`json:"progress" validate:"omitempty,oneof=open closed in-progress"`
