@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/handlers"
@@ -43,7 +42,19 @@ func HealthRecords(r chi.Router, handler *handlers.Handler) {
 		}
 
 		validationResult, err := services.ValidateHealthRecord(&healthRecord)
-		fmt.Println("Validation result: ", validationResult.AssistantPrompt)
+		if validationResult.AssistantPrompt != "" {
+			message, err := json.Marshal(struct{Message string}{Message: validationResult.AssistantPrompt})
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(map[string]string{
+					"error": err.Error(),
+				})
+				return
+			}
+			w.Write(message)
+			return
+		}
+		
 		
 
 		w.Write([]byte(message))
