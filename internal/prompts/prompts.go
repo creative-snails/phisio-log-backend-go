@@ -15,6 +15,7 @@ type Prompts struct {
 type SystemPrompts struct {
 	Init		string
 	Treatments	func(currentRecord models.CreateHealthRecordRequest) string
+	Validation	string
 }
 
 type AssistantPrompts struct {
@@ -24,7 +25,6 @@ type AssistantPrompts struct {
 func NewPrompts() *Prompts {
 	p := &Prompts{}
 
-	
 	p.System.Init = fmt.Sprintf(`
 		Based on the user description, generate a JSON object that accurately matches the Go struct definition and validation rules.
 
@@ -51,14 +51,18 @@ func NewPrompts() *Prompts {
 		{
 			"parentRecordId": "",
 			"description": "",
-			"progress": "open",
-			"improvement": "stable",
-			"severity": "variable",
+			"progress": "",
+			"improvement": "",
+			"severity": "",
 			"treatmentsTried": []
 		}
 	`, time.Now().Format("2006-01-02"))
 
-
+	p.System.Validation =  `
+      Generate a user-friendly message using the error messages resulting from the validation of the previous input. Start with the following prompt and ensure the message is clear and helpful for the user:
+      'Please provide the following information to complete the health record:'
+      Use the validation errors to guide the user on what specific information is missing or incorrect. Ensure the message is polite, clear, and supportive.
+    `
 	p.Assistant.Treatments = "Have you tried any treatments on your own to manage your condition? If yes, please share the details."
 
 	return p
