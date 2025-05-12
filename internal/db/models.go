@@ -146,7 +146,6 @@ func (ns NullSeverityEnum) Value() (driver.Value, error) {
 
 type HealthRecord struct {
 	ID              uuid.UUID       `json:"id"`
-	UserID          uuid.UUID       `json:"userId"`
 	ParentRecordID  uuid.NullUUID   `json:"parentRecordId"`
 	Description     string          `json:"description"`
 	Progress        ProgressEnum    `json:"progress"`

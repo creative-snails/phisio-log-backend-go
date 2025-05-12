@@ -30,9 +30,6 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getHealthRecordStmt, err = db.PrepareContext(ctx, getHealthRecord); err != nil {
 		return nil, fmt.Errorf("error preparing query GetHealthRecord: %w", err)
 	}
-	if q.listHealthRecordsStmt, err = db.PrepareContext(ctx, listHealthRecords); err != nil {
-		return nil, fmt.Errorf("error preparing query ListHealthRecords: %w", err)
-	}
 	return &q, nil
 }
 
@@ -46,11 +43,6 @@ func (q *Queries) Close() error {
 	if q.getHealthRecordStmt != nil {
 		if cerr := q.getHealthRecordStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getHealthRecordStmt: %w", cerr)
-		}
-	}
-	if q.listHealthRecordsStmt != nil {
-		if cerr := q.listHealthRecordsStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing listHealthRecordsStmt: %w", cerr)
 		}
 	}
 	return err
@@ -94,7 +86,6 @@ type Queries struct {
 	tx                     *sql.Tx
 	createHealthRecordStmt *sql.Stmt
 	getHealthRecordStmt    *sql.Stmt
-	listHealthRecordsStmt  *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
@@ -103,6 +94,5 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		tx:                     tx,
 		createHealthRecordStmt: q.createHealthRecordStmt,
 		getHealthRecordStmt:    q.getHealthRecordStmt,
-		listHealthRecordsStmt:  q.listHealthRecordsStmt,
 	}
 }

@@ -44,7 +44,7 @@ type MedicalConsultation struct {
 }
 type HealthRecord struct {
 	ID 						string 					`json:"id"`
-	User 					User					`json:"user"`
+	// User 					User					`json:"user"`
 	Description 			string		 			`json:"description"`
 	Progress 				Progress				`json:"progress"`
 	Improvement				Improvement				`json:"improvement"`
