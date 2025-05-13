@@ -20,7 +20,7 @@ func HealthRecords(r chi.Router, handler *handlers.Handler) {
 			},
 			{
 				Role:    "user",
-				Content: "",
+				Content: "I went for a run and strained my ankle, I tried putting ice on it",
 			},
 		}
 		message, err := services.GenAI(messages, "json")

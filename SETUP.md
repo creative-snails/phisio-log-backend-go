@@ -32,7 +32,7 @@ The project uses Docker for containerization. Follow these steps to set up and r
    `
 
 2. **Access the Application**
-      - The application will be accessible at `http://localhost:5000`.
+      - The application will be accessible at `http://localhost:5050`.
 
 3. **Database Access**
       - The PostgreSQL database will be accessible at `localhost:5433`.
