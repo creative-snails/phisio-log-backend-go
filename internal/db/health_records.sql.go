@@ -14,19 +14,18 @@ import (
 
 const createHealthRecord = `-- name: CreateHealthRecord :one
 INSERT INTO health_records (
-    user_id,
+    -- user_id,
     parent_record_id,
     description,
     progress,
     improvement,
     severity,
     treatments_tried
-) VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, user_id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at
+) VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at
 `
 
 type CreateHealthRecordParams struct {
-	UserID          uuid.UUID       `json:"userId"`
 	ParentRecordID  uuid.NullUUID   `json:"parentRecordId"`
 	Description     string          `json:"description"`
 	Progress        ProgressEnum    `json:"progress"`
@@ -37,7 +36,6 @@ type CreateHealthRecordParams struct {
 
 func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecordParams) (HealthRecord, error) {
 	row := q.queryRow(ctx, q.createHealthRecordStmt, createHealthRecord,
-		arg.UserID,
 		arg.ParentRecordID,
 		arg.Description,
 		arg.Progress,
@@ -48,7 +46,6 @@ func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecord
 	var i HealthRecord
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
 		&i.ParentRecordID,
 		&i.Description,
 		&i.Progress,
@@ -62,7 +59,7 @@ func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecord
 }
 
 const getHealthRecord = `-- name: GetHealthRecord :one
-SELECT id, user_id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at FROM health_records
+SELECT id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at FROM health_records
 WHERE id = $1 LIMIT 1
 `
 
@@ -71,7 +68,6 @@ func (q *Queries) GetHealthRecord(ctx context.Context, id uuid.UUID) (HealthReco
 	var i HealthRecord
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
 		&i.ParentRecordID,
 		&i.Description,
 		&i.Progress,
@@ -82,44 +78,4 @@ func (q *Queries) GetHealthRecord(ctx context.Context, id uuid.UUID) (HealthReco
 		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const listHealthRecords = `-- name: ListHealthRecords :many
-SELECT id, user_id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at FROM health_records
-WHERE user_id = $1
-ORDER BY created_at DESC
-`
-
-func (q *Queries) ListHealthRecords(ctx context.Context, userID uuid.UUID) ([]HealthRecord, error) {
-	rows, err := q.query(ctx, q.listHealthRecordsStmt, listHealthRecords, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []HealthRecord
-	for rows.Next() {
-		var i HealthRecord
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.ParentRecordID,
-			&i.Description,
-			&i.Progress,
-			&i.Improvement,
-			&i.Severity,
-			pq.Array(&i.TreatmentsTried),
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }

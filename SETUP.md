@@ -12,7 +12,7 @@ Ensure you have the following installed on your system:
 Create a `.env` file in the root of your project and add the following environment variables:
 
 ```env
-SERVER_PORT=5000
+SERVER_PORT=5050
 SERVER_HOST=0.0.0.0
 DB_PORT=5432
 DB_HOST=db
@@ -32,7 +32,7 @@ The project uses Docker for containerization. Follow these steps to set up and r
    `
 
 2. **Access the Application**
-      - The application will be accessible at `http://localhost:5000`.
+      - The application will be accessible at `http://localhost:5050`.
 
 3. **Database Access**
       - The PostgreSQL database will be accessible at `localhost:5433`.

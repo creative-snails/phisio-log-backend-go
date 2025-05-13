@@ -13,7 +13,6 @@ import (
 type Querier interface {
 	CreateHealthRecord(ctx context.Context, arg CreateHealthRecordParams) (HealthRecord, error)
 	GetHealthRecord(ctx context.Context, id uuid.UUID) (HealthRecord, error)
-	ListHealthRecords(ctx context.Context, userID uuid.UUID) ([]HealthRecord, error)
 }
 
 var _ Querier = (*Queries)(nil)
