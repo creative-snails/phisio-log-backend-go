@@ -12,7 +12,7 @@ Ensure you have the following installed on your system:
 Create a `.env` file in the root of your project and add the following environment variables:
 
 ```env
-SERVER_PORT=5000
+SERVER_PORT=5050
 SERVER_HOST=0.0.0.0
 DB_PORT=5432
 DB_HOST=db
