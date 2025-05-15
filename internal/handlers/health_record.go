@@ -7,7 +7,6 @@ import (
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/prompts"
 	"github.com/creative-snails/phisio-log-backend-go/internal/services"
-	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -32,29 +31,10 @@ func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	conversation := Conversation{}
-	if rawReq.ConversationID != "" {
-		ConvesationID, err := uuid.Parse(rawReq.ConversationID)
-		if err != nil {
-			http.Error(w, "Invalid conversationId format", http.StatusBadRequest)
-			return
-		}
-
-		conv, ok := Conversations[ConvesationID]
-		if !ok {
-			conversation = *NewConversation(prompts.NewPrompts().System.Init)
-			fmt.Println(conversation)
-		} else {
-			conversation = conv
-		}
-	} else {
-		conversation = *NewConversation(prompts.NewPrompts().System.Init)
-	}
-
+	conversation := GetOrCreateConvesation(rawReq.ConversationID, prompts.NewPrompts().System.Init)
 	conversation.History = append(conversation.History, services.Message{Role: "user", Content: rawReq.Message})
-	Conversations[conversation.ID] = conversation
 
-	fmt.Println(Conversations)
+	fmt.Println(*Conversations[conversation.ID])
 
 
 	// treatments := []string{}

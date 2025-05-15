@@ -20,8 +20,26 @@ func NewConversation (systemPrompt string) *Conversation {
 	conversation.History = []services.Message{{Role: "system", Content: systemPrompt}}
 	conversation.LastAccessed = time.Now()
 
-	Conversations[conversation.ID] = *conversation
+	Conversations[conversation.ID] = conversation
 	return conversation
 }
 
-var Conversations = make(map[uuid.UUID]Conversation)
+var Conversations = make(map[uuid.UUID]*Conversation)
+
+func GetOrCreateConvesation(conversationID string, systemPrompt string) *Conversation {
+	if conversationID == "" {
+		return NewConversation(systemPrompt)
+	}
+
+	convID, err := uuid.Parse(conversationID) 
+	if err != nil {
+		return NewConversation(systemPrompt)
+	}
+
+	conv, exists := Conversations[convID]
+	if !exists {
+		return NewConversation(systemPrompt)
+	}
+
+	return conv
+}
