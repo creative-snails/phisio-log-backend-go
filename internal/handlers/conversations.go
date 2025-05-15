@@ -20,6 +20,7 @@ func NewConversation (systemPrompt string) *Conversation {
 	conversation.History = []services.Message{{Role: "system", Content: systemPrompt}}
 	conversation.LastAccessed = time.Now()
 
+	Conversations[conversation.ID] = *conversation
 	return conversation
 }
 
