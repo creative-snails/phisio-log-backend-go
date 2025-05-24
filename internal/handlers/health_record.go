@@ -2,18 +2,35 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/prompts"
 	"github.com/creative-snails/phisio-log-backend-go/internal/services"
+	"github.com/robfig/cron/v3"
 )
 
+var c = cron.New()
+
+func InitCron() {
+	c.AddFunc("0 * * * *", func() {
+		now := time.Now()
+		maxConversationAge := 24 * time.Hour
+		for id, conversation := range Conversations {
+			if !conversation.LastAccessed.IsZero() && now.Sub(conversation.LastAccessed) > maxConversationAge {
+				delete(Conversations, id)
+			}
+		}
+	})
+	c.Start()
+}
 type Handler struct {
 	healthRecordService services.HealthRecordService
 }
 
 func NewHandler(healthRecordService services.HealthRecordService) *Handler {
+	InitCron()
+
 	return &Handler {
 		healthRecordService: healthRecordService,
 	}
@@ -33,9 +50,6 @@ func (h *Handler) CreateHealthRecord(w http.ResponseWriter, r *http.Request) {
 
 	conversation := GetOrCreateConvesation(rawReq.ConversationID, prompts.NewPrompts().System.Init)
 	conversation.History = append(conversation.History, services.Message{Role: "user", Content: rawReq.Message})
-
-	fmt.Println(*Conversations[conversation.ID])
-
 
 	// treatments := []string{}
 	// if rawReq.TreatmentsTried != nil {
