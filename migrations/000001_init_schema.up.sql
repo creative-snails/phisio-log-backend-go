@@ -7,13 +7,15 @@ DROP FUNCTION IF EXISTS validate_string_array();
 
 -- Drop tables in reverse order of dependencies
 DROP TABLE IF EXISTS medical_consultations;
+DROP TABLE IF EXISTS affected_parts;
 DROP TABLE IF EXISTS symptoms;
 DROP TABLE IF EXISTS health_records;
-DROP TABLE IF EXISTS users;
+-- DROP TABLE IF EXISTS users;
 
 DROP TYPE IF EXISTS stage_enum;
 DROP TYPE IF EXISTS severity_enum;
 DROP TYPE IF EXISTS progression_enum;
+DROP TYPE IF EXISTS body_part_enum;
 
 -- =============================================
 -- Extensions
@@ -78,11 +80,11 @@ $$ LANGUAGE plpgsql;
 -- =============================================
 -- Table Definitions
 -- =============================================
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL CHECK (length(name) >= 2),
-    email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
-);
+-- CREATE TABLE users (
+--     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     name VARCHAR(100) NOT NULL CHECK (length(name) >= 2),
+--     email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
+-- );
 
 CREATE TABLE health_records (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

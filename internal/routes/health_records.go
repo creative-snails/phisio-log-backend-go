@@ -12,6 +12,11 @@ import (
 )
 
 func HealthRecords(r chi.Router, handler *handlers.Handler) {
+	r.Get("/queries/", func(w http.ResponseWriter, r *http.Request) {
+		handler.GetHealthRecord(w, r)
+
+	})
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		messages := []services.Message{
 			{

@@ -9,4 +9,5 @@ import (
 
 type HealthRecordService interface {
 	CreateHealthRecord(ctx context.Context, req *models.CreateHealthRecordRequest) (db.HealthRecord, error)
+	GetHealthRecord(ctx context.Context, healthRecordId string) (db.HealthRecord, error)
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -33,6 +34,22 @@ func NewHandler(healthRecordService services.HealthRecordService) *Handler {
 
 	return &Handler {
 		healthRecordService: healthRecordService,
+	}
+}
+
+func (h *Handler) GetHealthRecord(w http.ResponseWriter, r *http.Request) {
+	record, err := h.healthRecordService.GetHealthRecord(r.Context(), "4b5959c6-c88e-4c12-8115-e971669dbbe4")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println(record)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(record); err != nil {
+		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+		return
 	}
 }
 

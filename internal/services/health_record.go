@@ -6,6 +6,7 @@ import (
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/db"
 	"github.com/creative-snails/phisio-log-backend-go/internal/models"
+	"github.com/google/uuid"
 )
 
 
@@ -17,6 +18,14 @@ func NewHealthRecordService(queries *db.Queries) HealthRecordService {
 	return &HealthRecordServiceImpl{
 		queries: queries,
 	}
+}
+
+func (s *HealthRecordServiceImpl) GetHealthRecord(ctx context.Context, healthRecordId string) (db.HealthRecord, error) {
+	id, err := uuid.Parse(healthRecordId)
+	if err != nil {
+		return db.HealthRecord{}, fmt.Errorf("invalid UUID: %w", err)
+	}
+	return s.queries.GetHealthRecord(ctx, id)
 }
 
 func (s *HealthRecordServiceImpl) CreateHealthRecord(ctx context.Context, req *models.CreateHealthRecordRequest) (db.HealthRecord, error) {

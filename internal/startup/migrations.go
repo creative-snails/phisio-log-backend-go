@@ -21,6 +21,7 @@ func RunMigrations(dbConn *sql.DB) error {
 		"phisiolog",
 		driver,
 	)
+
 	if err != nil {
 		return fmt.Errorf("could not create the migration instance %w", err)
 	}
