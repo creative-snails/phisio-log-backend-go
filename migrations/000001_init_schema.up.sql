@@ -11,9 +11,9 @@ DROP TABLE IF EXISTS symptoms;
 DROP TABLE IF EXISTS health_records;
 DROP TABLE IF EXISTS users;
 
-DROP TYPE IF EXISTS progress_enum;
-DROP TYPE IF EXISTS improvement_enum;
+DROP TYPE IF EXISTS stage_enum;
 DROP TYPE IF EXISTS severity_enum;
+DROP TYPE IF EXISTS progression_enum;
 
 -- =============================================
 -- Extensions
@@ -23,9 +23,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- =============================================
 -- Custom Types
 -- =============================================
-CREATE TYPE progress_enum AS ENUM ('open', 'closed', 'in-progress');
-CREATE TYPE improvement_enum AS ENUM ('improving', 'stable', 'worsening', 'varying');
+CREATE TYPE stage_enum AS ENUM ('open', 'closed', 'in-progress');
 CREATE TYPE severity_enum AS ENUM ('mild', 'moderate', 'severe', 'variable');
+CREATE TYPE progression_enum AS ENUM ('improving', 'stable', 'worsening', 'varying');
 
 -- =============================================
 -- Early Functions
@@ -44,7 +44,7 @@ BEGIN
         array_position(entries, NULL) IS NULL AND
         NOT EXISTS (
             SELECT 1
-            FROM unnset(entries) AS e
+            FROM unnest(entries) AS e
             WHERE length(e) < 2 OR length(e) > 200
         )
     );
@@ -65,14 +65,18 @@ CREATE TABLE health_records (
     -- user_id UUID NOT NULL,
     parent_record_id UUID NULL,
     description VARCHAR(2000) NOT NULL CHECK (length(description) >= 10), 
-    progress progress_enum NOT NULL DEFAULT 'open',
-    improvement improvement_enum NOT NULL DEFAULT 'stable',
+    progress stage_enum NOT NULL DEFAULT 'open',
     severity severity_enum NOT NULL DEFAULT 'variable',
+    improvement progression_enum NOT NULL DEFAULT 'stable',
     treatments_tried VARCHAR(200)[] CHECK (validate_string_array(treatments_tried)),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     -- CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_parent FOREIGN KEY (parent_record_id) REFERENCES health_records(id)
+);
+
+CREATE TABLE body_parts (
+    key VARCHAR(50) PRIMARY KEY 
 );
 
 CREATE TABLE symptoms (
@@ -82,6 +86,15 @@ CREATE TABLE symptoms (
     start_date TIMESTAMP,
     CONSTRAINT fk_health_record FOREIGN KEY (health_record_id)
         REFERENCES health_records(id)
+);
+
+CREATE TABLE symptoms_body_parts (
+    symptom_id UUID NOT NULL,
+    body_part_key VARCHAR(50) NOT NULL,
+    status SMALLINT NOT NULL DEFAULT 1,
+    PRIMARY KEY (symptom_id, body_part_key),
+    CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id),
+    CONSTRAINT fk_body_parts FOREIGN KEY (body_part_key) REFERENCES body_parts(key),
 );
 
 CREATE TABLE medical_consultations (
