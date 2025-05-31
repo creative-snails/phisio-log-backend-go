@@ -11,8 +11,32 @@ import (
 )
 
 type Querier interface {
+	// =============================================
+	// Affected Parts
+	// =============================================
+	CreateAffectedPart(ctx context.Context, arg CreateAffectedPartParams) (AffectedPart, error)
+	// =============================================
+	// Health Records
+	// =============================================
 	CreateHealthRecord(ctx context.Context, arg CreateHealthRecordParams) (HealthRecord, error)
+	// =============================================
+	// Medical Consultations
+	// =============================================
+	CreateMedicalConsultation(ctx context.Context, arg CreateMedicalConsultationParams) (MedicalConsultation, error)
+	// =============================================
+	// Symptoms
+	// =============================================
+	CreateSymptom(ctx context.Context, arg CreateSymptomParams) (Symptom, error)
+	DeleteAffectedPart(ctx context.Context, arg DeleteAffectedPartParams) (AffectedPart, error)
+	DeleteMedicalConsultation(ctx context.Context, id uuid.UUID) (MedicalConsultation, error)
+	DeleteSymptom(ctx context.Context, id uuid.UUID) (Symptom, error)
+	GetAffectedParts(ctx context.Context, symptomID uuid.UUID) ([]AffectedPart, error)
 	GetHealthRecord(ctx context.Context, id uuid.UUID) (HealthRecord, error)
+	GetMedicalConsultations(ctx context.Context, healthRecordID uuid.UUID) ([]MedicalConsultation, error)
+	GetSymptoms(ctx context.Context, healthRecordID uuid.UUID) ([]Symptom, error)
+	UpdateAffectedPart(ctx context.Context, arg UpdateAffectedPartParams) (AffectedPart, error)
+	UpdateMedicalConsultation(ctx context.Context, arg UpdateMedicalConsultationParams) (MedicalConsultation, error)
+	UpdateSymptom(ctx context.Context, arg UpdateSymptomParams) (Symptom, error)
 }
 
 var _ Querier = (*Queries)(nil)

@@ -24,25 +24,121 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.createAffectedPartStmt, err = db.PrepareContext(ctx, createAffectedPart); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateAffectedPart: %w", err)
+	}
 	if q.createHealthRecordStmt, err = db.PrepareContext(ctx, createHealthRecord); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateHealthRecord: %w", err)
 	}
+	if q.createMedicalConsultationStmt, err = db.PrepareContext(ctx, createMedicalConsultation); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateMedicalConsultation: %w", err)
+	}
+	if q.createSymptomStmt, err = db.PrepareContext(ctx, createSymptom); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateSymptom: %w", err)
+	}
+	if q.deleteAffectedPartStmt, err = db.PrepareContext(ctx, deleteAffectedPart); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteAffectedPart: %w", err)
+	}
+	if q.deleteMedicalConsultationStmt, err = db.PrepareContext(ctx, deleteMedicalConsultation); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteMedicalConsultation: %w", err)
+	}
+	if q.deleteSymptomStmt, err = db.PrepareContext(ctx, deleteSymptom); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteSymptom: %w", err)
+	}
+	if q.getAffectedPartsStmt, err = db.PrepareContext(ctx, getAffectedParts); err != nil {
+		return nil, fmt.Errorf("error preparing query GetAffectedParts: %w", err)
+	}
 	if q.getHealthRecordStmt, err = db.PrepareContext(ctx, getHealthRecord); err != nil {
 		return nil, fmt.Errorf("error preparing query GetHealthRecord: %w", err)
+	}
+	if q.getMedicalConsultationsStmt, err = db.PrepareContext(ctx, getMedicalConsultations); err != nil {
+		return nil, fmt.Errorf("error preparing query GetMedicalConsultations: %w", err)
+	}
+	if q.getSymptomsStmt, err = db.PrepareContext(ctx, getSymptoms); err != nil {
+		return nil, fmt.Errorf("error preparing query GetSymptoms: %w", err)
+	}
+	if q.updateAffectedPartStmt, err = db.PrepareContext(ctx, updateAffectedPart); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAffectedPart: %w", err)
+	}
+	if q.updateMedicalConsultationStmt, err = db.PrepareContext(ctx, updateMedicalConsultation); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateMedicalConsultation: %w", err)
+	}
+	if q.updateSymptomStmt, err = db.PrepareContext(ctx, updateSymptom); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateSymptom: %w", err)
 	}
 	return &q, nil
 }
 
 func (q *Queries) Close() error {
 	var err error
+	if q.createAffectedPartStmt != nil {
+		if cerr := q.createAffectedPartStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createAffectedPartStmt: %w", cerr)
+		}
+	}
 	if q.createHealthRecordStmt != nil {
 		if cerr := q.createHealthRecordStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createHealthRecordStmt: %w", cerr)
 		}
 	}
+	if q.createMedicalConsultationStmt != nil {
+		if cerr := q.createMedicalConsultationStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createMedicalConsultationStmt: %w", cerr)
+		}
+	}
+	if q.createSymptomStmt != nil {
+		if cerr := q.createSymptomStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createSymptomStmt: %w", cerr)
+		}
+	}
+	if q.deleteAffectedPartStmt != nil {
+		if cerr := q.deleteAffectedPartStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteAffectedPartStmt: %w", cerr)
+		}
+	}
+	if q.deleteMedicalConsultationStmt != nil {
+		if cerr := q.deleteMedicalConsultationStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteMedicalConsultationStmt: %w", cerr)
+		}
+	}
+	if q.deleteSymptomStmt != nil {
+		if cerr := q.deleteSymptomStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteSymptomStmt: %w", cerr)
+		}
+	}
+	if q.getAffectedPartsStmt != nil {
+		if cerr := q.getAffectedPartsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAffectedPartsStmt: %w", cerr)
+		}
+	}
 	if q.getHealthRecordStmt != nil {
 		if cerr := q.getHealthRecordStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getHealthRecordStmt: %w", cerr)
+		}
+	}
+	if q.getMedicalConsultationsStmt != nil {
+		if cerr := q.getMedicalConsultationsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getMedicalConsultationsStmt: %w", cerr)
+		}
+	}
+	if q.getSymptomsStmt != nil {
+		if cerr := q.getSymptomsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getSymptomsStmt: %w", cerr)
+		}
+	}
+	if q.updateAffectedPartStmt != nil {
+		if cerr := q.updateAffectedPartStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAffectedPartStmt: %w", cerr)
+		}
+	}
+	if q.updateMedicalConsultationStmt != nil {
+		if cerr := q.updateMedicalConsultationStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateMedicalConsultationStmt: %w", cerr)
+		}
+	}
+	if q.updateSymptomStmt != nil {
+		if cerr := q.updateSymptomStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateSymptomStmt: %w", cerr)
 		}
 	}
 	return err
@@ -82,17 +178,41 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                     DBTX
-	tx                     *sql.Tx
-	createHealthRecordStmt *sql.Stmt
-	getHealthRecordStmt    *sql.Stmt
+	db                            DBTX
+	tx                            *sql.Tx
+	createAffectedPartStmt        *sql.Stmt
+	createHealthRecordStmt        *sql.Stmt
+	createMedicalConsultationStmt *sql.Stmt
+	createSymptomStmt             *sql.Stmt
+	deleteAffectedPartStmt        *sql.Stmt
+	deleteMedicalConsultationStmt *sql.Stmt
+	deleteSymptomStmt             *sql.Stmt
+	getAffectedPartsStmt          *sql.Stmt
+	getHealthRecordStmt           *sql.Stmt
+	getMedicalConsultationsStmt   *sql.Stmt
+	getSymptomsStmt               *sql.Stmt
+	updateAffectedPartStmt        *sql.Stmt
+	updateMedicalConsultationStmt *sql.Stmt
+	updateSymptomStmt             *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                     tx,
-		tx:                     tx,
-		createHealthRecordStmt: q.createHealthRecordStmt,
-		getHealthRecordStmt:    q.getHealthRecordStmt,
+		db:                            tx,
+		tx:                            tx,
+		createAffectedPartStmt:        q.createAffectedPartStmt,
+		createHealthRecordStmt:        q.createHealthRecordStmt,
+		createMedicalConsultationStmt: q.createMedicalConsultationStmt,
+		createSymptomStmt:             q.createSymptomStmt,
+		deleteAffectedPartStmt:        q.deleteAffectedPartStmt,
+		deleteMedicalConsultationStmt: q.deleteMedicalConsultationStmt,
+		deleteSymptomStmt:             q.deleteSymptomStmt,
+		getAffectedPartsStmt:          q.getAffectedPartsStmt,
+		getHealthRecordStmt:           q.getHealthRecordStmt,
+		getMedicalConsultationsStmt:   q.getMedicalConsultationsStmt,
+		getSymptomsStmt:               q.getSymptomsStmt,
+		updateAffectedPartStmt:        q.updateAffectedPartStmt,
+		updateMedicalConsultationStmt: q.updateMedicalConsultationStmt,
+		updateSymptomStmt:             q.updateSymptomStmt,
 	}
 }

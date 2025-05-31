@@ -36,7 +36,7 @@ type Status struct {
 }
 
 type AffectedPart struct {
-	ID		string	`json:"id"`
+	Key		string	`json:"key"`
 	State   string	`json:"state"`
 }
 

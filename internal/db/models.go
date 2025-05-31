@@ -13,91 +13,156 @@ import (
 	"github.com/google/uuid"
 )
 
-type ImprovementEnum string
+type BodyPartEnum string
 
 const (
-	ImprovementEnumImproving ImprovementEnum = "improving"
-	ImprovementEnumStable    ImprovementEnum = "stable"
-	ImprovementEnumWorsening ImprovementEnum = "worsening"
-	ImprovementEnumVarying   ImprovementEnum = "varying"
+	BodyPartEnumHeadFront          BodyPartEnum = "head-front"
+	BodyPartEnumNeckLeftFront      BodyPartEnum = "neck-left-front"
+	BodyPartEnumNeckRightFront     BodyPartEnum = "neck-right-front"
+	BodyPartEnumShoulderLeftFront  BodyPartEnum = "shoulder-left-front"
+	BodyPartEnumShoulderRightFront BodyPartEnum = "shoulder-right-front"
+	BodyPartEnumUpperArmLeftFront  BodyPartEnum = "upper-arm-left-front"
+	BodyPartEnumUpperArmRightFront BodyPartEnum = "upper-arm-right-front"
+	BodyPartEnumElbowLeftFront     BodyPartEnum = "elbow-left-front"
+	BodyPartEnumElbowRightFront    BodyPartEnum = "elbow-right-front"
+	BodyPartEnumForearmLeftFront   BodyPartEnum = "forearm-left-front"
+	BodyPartEnumForearmRightFront  BodyPartEnum = "forearm-right-front"
+	BodyPartEnumWristLeftFront     BodyPartEnum = "wrist-left-front"
+	BodyPartEnumWristRightFront    BodyPartEnum = "wrist-right-front"
+	BodyPartEnumHandLeftFront      BodyPartEnum = "hand-left-front"
+	BodyPartEnumHandRightFront     BodyPartEnum = "hand-right-front"
+	BodyPartEnumChestLeft          BodyPartEnum = "chest-left"
+	BodyPartEnumChestRight         BodyPartEnum = "chest-right"
+	BodyPartEnumUpperAbdomenLeft   BodyPartEnum = "upper-abdomen-left"
+	BodyPartEnumUpperAbdomenRight  BodyPartEnum = "upper-abdomen-right"
+	BodyPartEnumLowerAbdomenLeft   BodyPartEnum = "lower-abdomen-left"
+	BodyPartEnumLowerAbdomenRight  BodyPartEnum = "lower-abdomen-right"
+	BodyPartEnumHipLeftFront       BodyPartEnum = "hip-left-front"
+	BodyPartEnumHipRightFront      BodyPartEnum = "hip-right-front"
+	BodyPartEnumThighLeftFront     BodyPartEnum = "thigh-left-front"
+	BodyPartEnumThighRightFront    BodyPartEnum = "thigh-right-front"
+	BodyPartEnumKneeLeftFront      BodyPartEnum = "knee-left-front"
+	BodyPartEnumKneeRightFront     BodyPartEnum = "knee-right-front"
+	BodyPartEnumLowerLegLeftFront  BodyPartEnum = "lower-leg-left-front"
+	BodyPartEnumLowerLegRightFront BodyPartEnum = "lower-leg-right-front"
+	BodyPartEnumAnkleLeftFront     BodyPartEnum = "ankle-left-front"
+	BodyPartEnumAnkleRightFront    BodyPartEnum = "ankle-right-front"
+	BodyPartEnumFootLeftFront      BodyPartEnum = "foot-left-front"
+	BodyPartEnumFootRightFront     BodyPartEnum = "foot-right-front"
+	BodyPartEnumHeadBack           BodyPartEnum = "head-back"
+	BodyPartEnumShoulderRightBack  BodyPartEnum = "shoulder-right-back"
+	BodyPartEnumUpperArmRightBack  BodyPartEnum = "upper-arm-right-back"
+	BodyPartEnumElbowRightBack     BodyPartEnum = "elbow-right-back"
+	BodyPartEnumForearmRightBack   BodyPartEnum = "forearm-right-back"
+	BodyPartEnumWristRightBack     BodyPartEnum = "wrist-right-back"
+	BodyPartEnumHandRightBack      BodyPartEnum = "hand-right-back"
+	BodyPartEnumKneeRightBack      BodyPartEnum = "knee-right-back"
+	BodyPartEnumLowerLegRightBack  BodyPartEnum = "lower-leg-right-back"
+	BodyPartEnumAnkleRightBack     BodyPartEnum = "ankle-right-back"
+	BodyPartEnumFootRightBack      BodyPartEnum = "foot-right-back"
+	BodyPartEnumButtocksRight      BodyPartEnum = "buttocks-right"
+	BodyPartEnumMiddleBackRight    BodyPartEnum = "middle-back-right"
+	BodyPartEnumThighRightBack     BodyPartEnum = "thigh-right-back"
+	BodyPartEnumShoulderBladeRight BodyPartEnum = "shoulder-blade-right"
+	BodyPartEnumNeckRightBack      BodyPartEnum = "neck-right-back"
+	BodyPartEnumUpperSpineRight    BodyPartEnum = "upper-spine-right"
+	BodyPartEnumLowerSpineRight    BodyPartEnum = "lower-spine-right"
+	BodyPartEnumShoulderLeftBack   BodyPartEnum = "shoulder-left-back"
+	BodyPartEnumUpperArmLeftBack   BodyPartEnum = "upper-arm-left-back"
+	BodyPartEnumElbowLeftBack      BodyPartEnum = "elbow-left-back"
+	BodyPartEnumForearmLeftBack    BodyPartEnum = "forearm-left-back"
+	BodyPartEnumWristLeftBack      BodyPartEnum = "wrist-left-back"
+	BodyPartEnumHandLeftBack       BodyPartEnum = "hand-left-back"
+	BodyPartEnumKneeLeftBack       BodyPartEnum = "knee-left-back"
+	BodyPartEnumLowerLegLeftBack   BodyPartEnum = "lower-leg-left-back"
+	BodyPartEnumAnkleLeftBack      BodyPartEnum = "ankle-left-back"
+	BodyPartEnumFootLeftBack       BodyPartEnum = "foot-left-back"
+	BodyPartEnumButtocksLeftBack   BodyPartEnum = "buttocks-left-back"
+	BodyPartEnumMiddleBackLeft     BodyPartEnum = "middle-back-left"
+	BodyPartEnumThighLeftBack      BodyPartEnum = "thigh-left-back"
+	BodyPartEnumShoulderBladeLeft  BodyPartEnum = "shoulder-blade-left"
+	BodyPartEnumNeckLeftBack       BodyPartEnum = "neck-left-back"
+	BodyPartEnumUpperSpineLeft     BodyPartEnum = "upper-spine-left"
+	BodyPartEnumLowerSpineLeft     BodyPartEnum = "lower-spine-left"
 )
 
-func (e *ImprovementEnum) Scan(src interface{}) error {
+func (e *BodyPartEnum) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = ImprovementEnum(s)
+		*e = BodyPartEnum(s)
 	case string:
-		*e = ImprovementEnum(s)
+		*e = BodyPartEnum(s)
 	default:
-		return fmt.Errorf("unsupported scan type for ImprovementEnum: %T", src)
+		return fmt.Errorf("unsupported scan type for BodyPartEnum: %T", src)
 	}
 	return nil
 }
 
-type NullImprovementEnum struct {
-	ImprovementEnum ImprovementEnum `json:"improvementEnum"`
-	Valid           bool            `json:"valid"` // Valid is true if ImprovementEnum is not NULL
+type NullBodyPartEnum struct {
+	BodyPartEnum BodyPartEnum `json:"bodyPartEnum"`
+	Valid        bool         `json:"valid"` // Valid is true if BodyPartEnum is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullImprovementEnum) Scan(value interface{}) error {
+func (ns *NullBodyPartEnum) Scan(value interface{}) error {
 	if value == nil {
-		ns.ImprovementEnum, ns.Valid = "", false
+		ns.BodyPartEnum, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.ImprovementEnum.Scan(value)
+	return ns.BodyPartEnum.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullImprovementEnum) Value() (driver.Value, error) {
+func (ns NullBodyPartEnum) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.ImprovementEnum), nil
+	return string(ns.BodyPartEnum), nil
 }
 
-type ProgressEnum string
+type ProgressionEnum string
 
 const (
-	ProgressEnumOpen       ProgressEnum = "open"
-	ProgressEnumClosed     ProgressEnum = "closed"
-	ProgressEnumInProgress ProgressEnum = "in-progress"
+	ProgressionEnumImproving ProgressionEnum = "improving"
+	ProgressionEnumStable    ProgressionEnum = "stable"
+	ProgressionEnumWorsening ProgressionEnum = "worsening"
+	ProgressionEnumVarying   ProgressionEnum = "varying"
 )
 
-func (e *ProgressEnum) Scan(src interface{}) error {
+func (e *ProgressionEnum) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = ProgressEnum(s)
+		*e = ProgressionEnum(s)
 	case string:
-		*e = ProgressEnum(s)
+		*e = ProgressionEnum(s)
 	default:
-		return fmt.Errorf("unsupported scan type for ProgressEnum: %T", src)
+		return fmt.Errorf("unsupported scan type for ProgressionEnum: %T", src)
 	}
 	return nil
 }
 
-type NullProgressEnum struct {
-	ProgressEnum ProgressEnum `json:"progressEnum"`
-	Valid        bool         `json:"valid"` // Valid is true if ProgressEnum is not NULL
+type NullProgressionEnum struct {
+	ProgressionEnum ProgressionEnum `json:"progressionEnum"`
+	Valid           bool            `json:"valid"` // Valid is true if ProgressionEnum is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullProgressEnum) Scan(value interface{}) error {
+func (ns *NullProgressionEnum) Scan(value interface{}) error {
 	if value == nil {
-		ns.ProgressEnum, ns.Valid = "", false
+		ns.ProgressionEnum, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.ProgressEnum.Scan(value)
+	return ns.ProgressionEnum.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullProgressEnum) Value() (driver.Value, error) {
+func (ns NullProgressionEnum) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.ProgressEnum), nil
+	return string(ns.ProgressionEnum), nil
 }
 
 type SeverityEnum string
@@ -144,13 +209,62 @@ func (ns NullSeverityEnum) Value() (driver.Value, error) {
 	return string(ns.SeverityEnum), nil
 }
 
+type StageEnum string
+
+const (
+	StageEnumOpen       StageEnum = "open"
+	StageEnumClosed     StageEnum = "closed"
+	StageEnumInProgress StageEnum = "in-progress"
+)
+
+func (e *StageEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = StageEnum(s)
+	case string:
+		*e = StageEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for StageEnum: %T", src)
+	}
+	return nil
+}
+
+type NullStageEnum struct {
+	StageEnum StageEnum `json:"stageEnum"`
+	Valid     bool      `json:"valid"` // Valid is true if StageEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullStageEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.StageEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.StageEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullStageEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.StageEnum), nil
+}
+
+type AffectedPart struct {
+	SymptomID uuid.UUID    `json:"symptomId"`
+	BodyPart  BodyPartEnum `json:"bodyPart"`
+	State     int16        `json:"state"`
+}
+
 type HealthRecord struct {
 	ID              uuid.UUID       `json:"id"`
 	ParentRecordID  uuid.NullUUID   `json:"parentRecordId"`
 	Description     string          `json:"description"`
-	Progress        ProgressEnum    `json:"progress"`
-	Improvement     ImprovementEnum `json:"improvement"`
+	Stage           StageEnum       `json:"stage"`
 	Severity        SeverityEnum    `json:"severity"`
+	Progression     ProgressionEnum `json:"progression"`
 	TreatmentsTried []string        `json:"treatmentsTried"`
 	CreatedAt       sql.NullTime    `json:"createdAt"`
 	UpdatedAt       sql.NullTime    `json:"updatedAt"`

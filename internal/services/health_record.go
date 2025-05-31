@@ -28,9 +28,9 @@ func (s *HealthRecordServiceImpl) CreateHealthRecord(ctx context.Context, req *m
 		// UserID:				req.UserID,
 		ParentRecordID: 	req.ParentRecordID,
 		Description: 		req.Description,
-		Progress: 			db.ProgressEnum(req.Progress),	
-		Improvement: 		db.ImprovementEnum(req.Improvement),
+		Stage: 				db.StageEnum(req.Improvement),
 		Severity: 			db.SeverityEnum(req.Severity),
+		Progression: 		db.ProgressionEnum(req.Progress),	
 		TreatmentsTried: 	req.TreatmentsTried,
 	}
 

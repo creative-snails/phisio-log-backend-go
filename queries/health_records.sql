@@ -53,7 +53,7 @@ RETURNING *;
 -- name: CreateAffectedPart :one
 INSERT INTO affected_parts (
     symptom_id,
-    body_part_id,
+    body_part,
     state
 ) VALUES ($1, $2, $3)
 RETURNING *;
@@ -66,10 +66,43 @@ WHERE symptom_id = $1;
 UPDATE affected_parts
 SET
     state = $3
-WHERE (symptom_id = $1 AND body_part_id = $2)
+WHERE (symptom_id = $1 AND body_part = $2)
 RETURNING *;
 
 -- name: DeleteAffectedPart :one
 DELETE FROM affected_parts
-WHERE (symptom_id = $1 AND body_part_id = $2)
+WHERE (symptom_id = $1 AND body_part = $2)
+RETURNING *;
+
+-- =============================================
+-- Medical Consultations
+-- =============================================
+
+-- name: CreateMedicalConsultation :one
+INSERT INTO medical_consultations (
+    health_record_id,
+    consultant,
+    date,
+    diagnosis,
+    follow_up_actions
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING *;
+
+-- name: GetMedicalConsultations :many
+SELECT * FROM medical_consultations
+WHERE health_record_id = $1;
+
+-- name: UpdateMedicalConsultation :one
+UPDATE medical_consultations
+SET 
+    consultant = $2,
+    date = $3,
+    diagnosis = $4,
+    follow_up_actions = $5
+WHERE id = $1
+RETURNING *;
+
+-- name: DeleteMedicalConsultation :one
+DELETE FROM medical_consultations
+WHERE id = $1
 RETURNING *;

@@ -7,40 +7,71 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
+const createAffectedPart = `-- name: CreateAffectedPart :one
+
+INSERT INTO affected_parts (
+    symptom_id,
+    body_part,
+    state
+) VALUES ($1, $2, $3)
+RETURNING symptom_id, body_part, state
+`
+
+type CreateAffectedPartParams struct {
+	SymptomID uuid.UUID    `json:"symptomId"`
+	BodyPart  BodyPartEnum `json:"bodyPart"`
+	State     int16        `json:"state"`
+}
+
+// =============================================
+// Affected Parts
+// =============================================
+func (q *Queries) CreateAffectedPart(ctx context.Context, arg CreateAffectedPartParams) (AffectedPart, error) {
+	row := q.queryRow(ctx, q.createAffectedPartStmt, createAffectedPart, arg.SymptomID, arg.BodyPart, arg.State)
+	var i AffectedPart
+	err := row.Scan(&i.SymptomID, &i.BodyPart, &i.State)
+	return i, err
+}
+
 const createHealthRecord = `-- name: CreateHealthRecord :one
+
 INSERT INTO health_records (
-    -- user_id,
     parent_record_id,
     description,
-    progress,
-    improvement,
+    stage,
     severity,
+    progression,
     treatments_tried
 ) VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at
+RETURNING id, parent_record_id, description, stage, severity, progression, treatments_tried, created_at, updated_at
 `
 
 type CreateHealthRecordParams struct {
 	ParentRecordID  uuid.NullUUID   `json:"parentRecordId"`
 	Description     string          `json:"description"`
-	Progress        ProgressEnum    `json:"progress"`
-	Improvement     ImprovementEnum `json:"improvement"`
+	Stage           StageEnum       `json:"stage"`
 	Severity        SeverityEnum    `json:"severity"`
+	Progression     ProgressionEnum `json:"progression"`
 	TreatmentsTried []string        `json:"treatmentsTried"`
 }
 
+// =============================================
+// Health Records
+// =============================================
 func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecordParams) (HealthRecord, error) {
 	row := q.queryRow(ctx, q.createHealthRecordStmt, createHealthRecord,
 		arg.ParentRecordID,
 		arg.Description,
-		arg.Progress,
-		arg.Improvement,
+		arg.Stage,
 		arg.Severity,
+		arg.Progression,
 		pq.Array(arg.TreatmentsTried),
 	)
 	var i HealthRecord
@@ -48,9 +79,9 @@ func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecord
 		&i.ID,
 		&i.ParentRecordID,
 		&i.Description,
-		&i.Progress,
-		&i.Improvement,
+		&i.Stage,
 		&i.Severity,
+		&i.Progression,
 		pq.Array(&i.TreatmentsTried),
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -58,8 +89,166 @@ func (q *Queries) CreateHealthRecord(ctx context.Context, arg CreateHealthRecord
 	return i, err
 }
 
+const createMedicalConsultation = `-- name: CreateMedicalConsultation :one
+
+INSERT INTO medical_consultations (
+    health_record_id,
+    consultant,
+    date,
+    diagnosis,
+    follow_up_actions
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING id, health_record_id, consultant, date, diagnosis, follow_up_actions
+`
+
+type CreateMedicalConsultationParams struct {
+	HealthRecordID  uuid.UUID `json:"healthRecordId"`
+	Consultant      string    `json:"consultant"`
+	Date            time.Time `json:"date"`
+	Diagnosis       string    `json:"diagnosis"`
+	FollowUpActions []string  `json:"followUpActions"`
+}
+
+// =============================================
+// Medical Consultations
+// =============================================
+func (q *Queries) CreateMedicalConsultation(ctx context.Context, arg CreateMedicalConsultationParams) (MedicalConsultation, error) {
+	row := q.queryRow(ctx, q.createMedicalConsultationStmt, createMedicalConsultation,
+		arg.HealthRecordID,
+		arg.Consultant,
+		arg.Date,
+		arg.Diagnosis,
+		pq.Array(arg.FollowUpActions),
+	)
+	var i MedicalConsultation
+	err := row.Scan(
+		&i.ID,
+		&i.HealthRecordID,
+		&i.Consultant,
+		&i.Date,
+		&i.Diagnosis,
+		pq.Array(&i.FollowUpActions),
+	)
+	return i, err
+}
+
+const createSymptom = `-- name: CreateSymptom :one
+
+INSERT INTO symptoms (
+    health_record_id,
+    name,
+    start_date
+) VALUES ($1, $2, $3)
+RETURNING id, health_record_id, name, start_date
+`
+
+type CreateSymptomParams struct {
+	HealthRecordID uuid.UUID    `json:"healthRecordId"`
+	Name           string       `json:"name"`
+	StartDate      sql.NullTime `json:"startDate"`
+}
+
+// =============================================
+// Symptoms
+// =============================================
+func (q *Queries) CreateSymptom(ctx context.Context, arg CreateSymptomParams) (Symptom, error) {
+	row := q.queryRow(ctx, q.createSymptomStmt, createSymptom, arg.HealthRecordID, arg.Name, arg.StartDate)
+	var i Symptom
+	err := row.Scan(
+		&i.ID,
+		&i.HealthRecordID,
+		&i.Name,
+		&i.StartDate,
+	)
+	return i, err
+}
+
+const deleteAffectedPart = `-- name: DeleteAffectedPart :one
+DELETE FROM affected_parts
+WHERE (symptom_id = $1 AND body_part = $2)
+RETURNING symptom_id, body_part, state
+`
+
+type DeleteAffectedPartParams struct {
+	SymptomID uuid.UUID    `json:"symptomId"`
+	BodyPart  BodyPartEnum `json:"bodyPart"`
+}
+
+func (q *Queries) DeleteAffectedPart(ctx context.Context, arg DeleteAffectedPartParams) (AffectedPart, error) {
+	row := q.queryRow(ctx, q.deleteAffectedPartStmt, deleteAffectedPart, arg.SymptomID, arg.BodyPart)
+	var i AffectedPart
+	err := row.Scan(&i.SymptomID, &i.BodyPart, &i.State)
+	return i, err
+}
+
+const deleteMedicalConsultation = `-- name: DeleteMedicalConsultation :one
+DELETE FROM medical_consultations
+WHERE id = $1
+RETURNING id, health_record_id, consultant, date, diagnosis, follow_up_actions
+`
+
+func (q *Queries) DeleteMedicalConsultation(ctx context.Context, id uuid.UUID) (MedicalConsultation, error) {
+	row := q.queryRow(ctx, q.deleteMedicalConsultationStmt, deleteMedicalConsultation, id)
+	var i MedicalConsultation
+	err := row.Scan(
+		&i.ID,
+		&i.HealthRecordID,
+		&i.Consultant,
+		&i.Date,
+		&i.Diagnosis,
+		pq.Array(&i.FollowUpActions),
+	)
+	return i, err
+}
+
+const deleteSymptom = `-- name: DeleteSymptom :one
+DELETE FROM symptoms
+WHERE id = $1
+RETURNING id, health_record_id, name, start_date
+`
+
+func (q *Queries) DeleteSymptom(ctx context.Context, id uuid.UUID) (Symptom, error) {
+	row := q.queryRow(ctx, q.deleteSymptomStmt, deleteSymptom, id)
+	var i Symptom
+	err := row.Scan(
+		&i.ID,
+		&i.HealthRecordID,
+		&i.Name,
+		&i.StartDate,
+	)
+	return i, err
+}
+
+const getAffectedParts = `-- name: GetAffectedParts :many
+SELECT symptom_id, body_part, state FROM affected_parts
+WHERE symptom_id = $1
+`
+
+func (q *Queries) GetAffectedParts(ctx context.Context, symptomID uuid.UUID) ([]AffectedPart, error) {
+	rows, err := q.query(ctx, q.getAffectedPartsStmt, getAffectedParts, symptomID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []AffectedPart
+	for rows.Next() {
+		var i AffectedPart
+		if err := rows.Scan(&i.SymptomID, &i.BodyPart, &i.State); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getHealthRecord = `-- name: GetHealthRecord :one
-SELECT id, parent_record_id, description, progress, improvement, severity, treatments_tried, created_at, updated_at FROM health_records
+SELECT id, parent_record_id, description, stage, severity, progression, treatments_tried, created_at, updated_at FROM health_records
 WHERE id = $1 LIMIT 1
 `
 
@@ -70,12 +259,167 @@ func (q *Queries) GetHealthRecord(ctx context.Context, id uuid.UUID) (HealthReco
 		&i.ID,
 		&i.ParentRecordID,
 		&i.Description,
-		&i.Progress,
-		&i.Improvement,
+		&i.Stage,
 		&i.Severity,
+		&i.Progression,
 		pq.Array(&i.TreatmentsTried),
 		&i.CreatedAt,
 		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getMedicalConsultations = `-- name: GetMedicalConsultations :many
+SELECT id, health_record_id, consultant, date, diagnosis, follow_up_actions FROM medical_consultations
+WHERE health_record_id = $1
+`
+
+func (q *Queries) GetMedicalConsultations(ctx context.Context, healthRecordID uuid.UUID) ([]MedicalConsultation, error) {
+	rows, err := q.query(ctx, q.getMedicalConsultationsStmt, getMedicalConsultations, healthRecordID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MedicalConsultation
+	for rows.Next() {
+		var i MedicalConsultation
+		if err := rows.Scan(
+			&i.ID,
+			&i.HealthRecordID,
+			&i.Consultant,
+			&i.Date,
+			&i.Diagnosis,
+			pq.Array(&i.FollowUpActions),
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getSymptoms = `-- name: GetSymptoms :many
+SELECT id, health_record_id, name, start_date FROM symptoms
+WHERE health_record_id = $1
+`
+
+func (q *Queries) GetSymptoms(ctx context.Context, healthRecordID uuid.UUID) ([]Symptom, error) {
+	rows, err := q.query(ctx, q.getSymptomsStmt, getSymptoms, healthRecordID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Symptom
+	for rows.Next() {
+		var i Symptom
+		if err := rows.Scan(
+			&i.ID,
+			&i.HealthRecordID,
+			&i.Name,
+			&i.StartDate,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateAffectedPart = `-- name: UpdateAffectedPart :one
+UPDATE affected_parts
+SET
+    state = $3
+WHERE (symptom_id = $1 AND body_part = $2)
+RETURNING symptom_id, body_part, state
+`
+
+type UpdateAffectedPartParams struct {
+	SymptomID uuid.UUID    `json:"symptomId"`
+	BodyPart  BodyPartEnum `json:"bodyPart"`
+	State     int16        `json:"state"`
+}
+
+func (q *Queries) UpdateAffectedPart(ctx context.Context, arg UpdateAffectedPartParams) (AffectedPart, error) {
+	row := q.queryRow(ctx, q.updateAffectedPartStmt, updateAffectedPart, arg.SymptomID, arg.BodyPart, arg.State)
+	var i AffectedPart
+	err := row.Scan(&i.SymptomID, &i.BodyPart, &i.State)
+	return i, err
+}
+
+const updateMedicalConsultation = `-- name: UpdateMedicalConsultation :one
+UPDATE medical_consultations
+SET 
+    consultant = $2,
+    date = $3,
+    diagnosis = $4,
+    follow_up_actions = $5
+WHERE id = $1
+RETURNING id, health_record_id, consultant, date, diagnosis, follow_up_actions
+`
+
+type UpdateMedicalConsultationParams struct {
+	ID              uuid.UUID `json:"id"`
+	Consultant      string    `json:"consultant"`
+	Date            time.Time `json:"date"`
+	Diagnosis       string    `json:"diagnosis"`
+	FollowUpActions []string  `json:"followUpActions"`
+}
+
+func (q *Queries) UpdateMedicalConsultation(ctx context.Context, arg UpdateMedicalConsultationParams) (MedicalConsultation, error) {
+	row := q.queryRow(ctx, q.updateMedicalConsultationStmt, updateMedicalConsultation,
+		arg.ID,
+		arg.Consultant,
+		arg.Date,
+		arg.Diagnosis,
+		pq.Array(arg.FollowUpActions),
+	)
+	var i MedicalConsultation
+	err := row.Scan(
+		&i.ID,
+		&i.HealthRecordID,
+		&i.Consultant,
+		&i.Date,
+		&i.Diagnosis,
+		pq.Array(&i.FollowUpActions),
+	)
+	return i, err
+}
+
+const updateSymptom = `-- name: UpdateSymptom :one
+UPDATE symptoms
+SET 
+    name = $2,
+    start_date = $3
+WHERE id = $1
+RETURNING id, health_record_id, name, start_date
+`
+
+type UpdateSymptomParams struct {
+	ID        uuid.UUID    `json:"id"`
+	Name      string       `json:"name"`
+	StartDate sql.NullTime `json:"startDate"`
+}
+
+func (q *Queries) UpdateSymptom(ctx context.Context, arg UpdateSymptomParams) (Symptom, error) {
+	row := q.queryRow(ctx, q.updateSymptomStmt, updateSymptom, arg.ID, arg.Name, arg.StartDate)
+	var i Symptom
+	err := row.Scan(
+		&i.ID,
+		&i.HealthRecordID,
+		&i.Name,
+		&i.StartDate,
 	)
 	return i, err
 }

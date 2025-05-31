@@ -7,14 +7,14 @@
       {
         "name": "Migraine",
         "startDate": "2025-02-20",
-        "bodyParts": [{ "id": "head-front", "state": 1 }]
+        "bodyParts": [{ "key": "head-front", "state": 1 }]
       },
       {
         "name": "Nausea",
         "startDate": "2025-02-21",
         "bodyParts": [
-          { "id": "upper-abdomen-left", "state": 1 },
-          { "id": "upper-abdomen-right", "state": 2 }
+          { "key": "upper-abdomen-left", "state": 1 },
+          { "key": "upper-abdomen-right", "state": 2 }
         ]
       }
     ],
@@ -45,7 +45,7 @@
           {
             "name": "Migraine",
             "startDate": "2025-02-20",
-            "bodyParts": [{ "id": "head-front", "state": 2 }]
+            "bodyParts": [{ "key": "head-front", "state": 2 }]
           }
         ],
         "stage": "open",

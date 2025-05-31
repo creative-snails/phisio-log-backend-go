@@ -109,10 +109,10 @@ CREATE TABLE symptoms (
 
 CREATE TABLE affected_parts (
     symptom_id UUID NOT NULL,
-    body_part_id body_part_enum NOT NULL,
+    body_part body_part_enum NOT NULL,
     state SMALLINT NOT NULL DEFAULT 1 CHECK (state BETWEEN 1 AND 4),
-    PRIMARY KEY (symptom_id, body_part_id),
-    CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id),
+    PRIMARY KEY (symptom_id, body_part),
+    CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id)
 );
 
 CREATE TABLE medical_consultations (
