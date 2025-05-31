@@ -86,21 +86,15 @@ CREATE TABLE users (
 
 CREATE TABLE health_records (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    -- user_id UUID NOT NULL,
     parent_record_id UUID NULL,
     description VARCHAR(2000) NOT NULL CHECK (length(description) >= 10), 
-    progress stage_enum NOT NULL DEFAULT 'open',
+    stage stage_enum NOT NULL DEFAULT 'open',
     severity severity_enum NOT NULL DEFAULT 'variable',
-    improvement progression_enum NOT NULL DEFAULT 'stable',
+    progression progression_enum NOT NULL DEFAULT 'stable',
     treatments_tried VARCHAR(200)[] CHECK (validate_string_array(treatments_tried)),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    -- CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_parent FOREIGN KEY (parent_record_id) REFERENCES health_records(id)
-);
-
-CREATE TABLE body_parts (
-    id body_part_enum PRIMARY KEY 
 );
 
 CREATE TABLE symptoms (
@@ -115,10 +109,9 @@ CREATE TABLE symptoms (
 CREATE TABLE symptoms_body_parts (
     symptom_id UUID NOT NULL,
     body_part_id body_part_enum NOT NULL,
-    state SMALLINT NOT NULL DEFAULT 1 CHECK (status BETWEEN 1 AND 4),
+    state SMALLINT NOT NULL DEFAULT 1 CHECK (state BETWEEN 1 AND 4),
     PRIMARY KEY (symptom_id, body_part_id),
     CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id),
-    CONSTRAINT fk_body_parts FOREIGN KEY (body_part_id) REFERENCES body_parts(id)
 );
 
 CREATE TABLE medical_consultations (
