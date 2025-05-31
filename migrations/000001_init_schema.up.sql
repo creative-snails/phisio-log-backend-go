@@ -104,9 +104,10 @@ CREATE TABLE symptoms (
     start_date TIMESTAMP,
     CONSTRAINT fk_health_record FOREIGN KEY (health_record_id)
         REFERENCES health_records(id)
+        ON DELETE CASCADE
 );
 
-CREATE TABLE symptoms_body_parts (
+CREATE TABLE affected_parts (
     symptom_id UUID NOT NULL,
     body_part_id body_part_enum NOT NULL,
     state SMALLINT NOT NULL DEFAULT 1 CHECK (state BETWEEN 1 AND 4),

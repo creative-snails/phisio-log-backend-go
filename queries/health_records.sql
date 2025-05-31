@@ -45,3 +45,31 @@ RETURNING *;
 DELETE FROM symptoms
 WHERE id = $1
 RETURNING *;
+
+-- =============================================
+-- Affected Parts
+-- =============================================
+
+-- name: CreateAffectedPart :one
+INSERT INTO affected_parts (
+    symptom_id,
+    body_part_id,
+    state
+) VALUES ($1, $2, $3)
+RETURNING *;
+
+-- name: GetAffectedParts :many
+SELECT * FROM affected_parts
+WHERE symptom_id = $1;
+
+-- name: UpdateAffectedPart :one
+UPDATE affected_parts
+SET
+    state = $3
+WHERE (symptom_id = $1 AND body_part_id = $2)
+RETURNING *;
+
+-- name: DeleteAffectedPart :one
+DELETE FROM affected_parts
+WHERE (symptom_id = $1 AND body_part_id = $2)
+RETURNING *;
