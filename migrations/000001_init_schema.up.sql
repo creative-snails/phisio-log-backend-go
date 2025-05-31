@@ -26,6 +26,30 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE stage_enum AS ENUM ('open', 'closed', 'in-progress');
 CREATE TYPE severity_enum AS ENUM ('mild', 'moderate', 'severe', 'variable');
 CREATE TYPE progression_enum AS ENUM ('improving', 'stable', 'worsening', 'varying');
+CREATE TYPE body_part_enum AS ENUM  (
+        -- Front side body parts
+        'head-front', 'neck-left-front', 'neck-right-front', 'shoulder-left-front',
+        'shoulder-right-front', 'upper-arm-left-front', 'upper-arm-right-front',
+        'elbow-left-front', 'elbow-right-front', 'forearm-left-front',
+        'forearm-right-front', 'wrist-left-front', 'wrist-right-front',
+        'hand-left-front', 'hand-right-front', 'chest-left', 'chest-right',
+        'upper-abdomen-left', 'upper-abdomen-right', 'lower-abdomen-left',
+        'lower-abdomen-right', 'hip-left-front', 'hip-right-front',
+        'thigh-left-front', 'thigh-right-front', 'knee-left-front',
+        'knee-right-front', 'lower-leg-left-front', 'lower-leg-right-front',
+        'ankle-left-front', 'ankle-right-front', 'foot-left-front', 'foot-right-front',
+        
+        -- Back side body parts
+        'head-back', 'shoulder-right-back', 'upper-arm-right-back', 'elbow-right-back',
+        'forearm-right-back', 'wrist-right-back', 'hand-right-back', 'knee-right-back',
+        'lower-leg-right-back', 'ankle-right-back', 'foot-right-back', 'buttocks-right',
+        'middle-back-right', 'thigh-right-back', 'shoulder-blade-right', 'neck-right-back',
+        'upper-spine-right', 'lower-spine-right', 'shoulder-left-back', 'upper-arm-left-back',
+        'elbow-left-back', 'forearm-left-back', 'wrist-left-back', 'hand-left-back',
+        'knee-left-back', 'lower-leg-left-back', 'ankle-left-back', 'foot-left-back',
+        'buttocks-left-back', 'middle-back-left', 'thigh-left-back', 'shoulder-blade-left',
+        'neck-left-back', 'upper-spine-left', 'lower-spine-left'
+    );
 
 -- =============================================
 -- Early Functions
@@ -76,7 +100,7 @@ CREATE TABLE health_records (
 );
 
 CREATE TABLE body_parts (
-    key VARCHAR(50) PRIMARY KEY 
+    id body_part_enum PRIMARY KEY 
 );
 
 CREATE TABLE symptoms (
@@ -90,11 +114,11 @@ CREATE TABLE symptoms (
 
 CREATE TABLE symptoms_body_parts (
     symptom_id UUID NOT NULL,
-    body_part_key VARCHAR(50) NOT NULL,
-    status SMALLINT NOT NULL DEFAULT 1,
-    PRIMARY KEY (symptom_id, body_part_key),
+    body_part_id body_part_enum NOT NULL,
+    status SMALLINT NOT NULL DEFAULT 1 CHECK (status BETWEEN 1 AND 4),
+    PRIMARY KEY (symptom_id, body_part_id),
     CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id),
-    CONSTRAINT fk_body_parts FOREIGN KEY (body_part_key) REFERENCES body_parts(key),
+    CONSTRAINT fk_body_parts FOREIGN KEY (body_part_id) REFERENCES body_parts(id)
 );
 
 CREATE TABLE medical_consultations (
