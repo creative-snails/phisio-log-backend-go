@@ -13,8 +13,8 @@ type CreateHealthRecordRequest struct {
 	// UserID			uuid.UUID			`json:"userId" validate:"required,uuid"`
 	ParentRecordID	uuid.NullUUID		`json:"parentRecordId" validate:"omitempty,uuid"`
 	Description		string				`json:"description" validate:"required,min=10,max=2000"`
-	Progress		types.Progress		`json:"progress" validate:"omitempty,oneof=open closed in-progress"`
-	Improvement		types.Improvement	`json:"improvement" validate:"omitempty,oneof=improving stable worsening varying"`
+	Progress		types.Stage		`json:"progress" validate:"omitempty,oneof=open closed in-progress"`
+	Improvement		types.Progression	`json:"improvement" validate:"omitempty,oneof=improving stable worsening varying"`
 	Severity		types.Severity		`json:"severity" validate:"omitempty,oneof=mild moderate severe variable"`
 	TreatmentsTried []string			`json:"treatmentsTried" validate:"omitempty,dive,min=2,max=200"`
 }

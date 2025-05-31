@@ -24,3 +24,8 @@ curl -sSfL https://raw.githubusercontent.com/air-verse/air/master/install.sh | s
 ```bash
 air
 ```
+
+### Database
+
+The database UML can be found here:
+https://drive.google.com/file/d/17Je4LQPVbsFVMWQO8VlvL8zP0szsLrUA/view?usp=sharing

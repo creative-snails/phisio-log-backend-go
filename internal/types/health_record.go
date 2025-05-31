@@ -2,19 +2,11 @@ package types
 
 import "time"
 
-type Progress string
+type Stage string
 const (
-	Open		Progress = "open"
-	Closed		Progress = "closed"
-	InProgress 	Progress = "in-progress"
-)
-
-type Improvement string
-const (
-	Improving	Improvement = "improving"
-	Stable		Improvement = "stable"
-	Worsening	Improvement = "worsening"
-	Varying		Improvement = "varying"
+	Open		Stage = "open"
+	Closed		Stage = "closed"
+	InProgress 	Stage = "in-progress"
 )
 
 type Severity string
@@ -24,15 +16,35 @@ const (
 	Severe		Severity = "severe"
 	Variable	Severity = "variable"
 )
+
+type Progression string
+const (
+	Improving	Progression = "improving"
+	Stable		Progression = "stable"
+	Worsening	Progression = "worsening"
+	Varying		Progression = "varying"
+)
 type User struct {
 	ID		string	`json:"id"`
 	Name	string	`json:"name"`
 } 
 
+type Status struct {
+	Stage 			Stage			`json:"stage"`
+	Severity 		Severity		`json:"severity"`
+	Progression		Progression		`json:"progression"`
+}
+
+type AffectedPart struct {
+	ID		string	`json:"id"`
+	State   string	`json:"state"`
+}
+
 type Symptom struct {
-	ID			string		`json:"id"`
-	Name		string		`json:"name"`
-	StartDate	time.Time	`json:"startDate"`
+	ID				string			`json:"id"`
+	Name			string			`json:"name"`
+	StartDate		time.Time		`json:"startDate"`
+	AffectedParts	[]AffectedPart	`json:"affectedParts"`
 }
 
 type MedicalConsultation struct {
@@ -40,19 +52,29 @@ type MedicalConsultation struct {
 	Consultant		string		`json:"consultant"`
 	Date			time.Time	`json:"date"`
 	Diagnosis		string		`json:"diagnosis"`
-	FollowUpActions	[]string	`json:"followUpActions"`
+	FollowUpActions	[]string	`json:"followUpActions,omitempty"`
 }
 type HealthRecord struct {
 	ID 						string 					`json:"id"`
-	// User 					User					`json:"user"`
+	ParentRecordID			string					`json:"parentRecordId,omitempty"`
+	Description 			string		 			`json:"description,omitempty"`
+	Status					Status					`json:"status"`
+	Symptoms				[]Symptom				`json:"symptoms,omitempty"`
+	TreatmentsTried 		[]string 				`json:"treatmentsTried,omitempty"`
+	MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
+	CreatedAt 				time.Time				`json:"createdAt"`
+	UpdatedAt 				time.Time				`json:"updatedAt"`
+}
+
+type HealthRecordPayload struct {
+	ID 						string 					`json:"id"`
+	ParentRecordID			string					`json:"parentRecordId,omitempty"`
 	Description 			string		 			`json:"description"`
-	Progress 				Progress				`json:"progress"`
-	Improvement				Improvement				`json:"improvement"`
-	Severity 				Severity				`json:"severity"`
+	Status					Status					`json:"status"`
 	Symptoms				[]Symptom				`json:"symptoms"`
-	TreatmentsTried 		[]string 				`json:"treatmentsTried"`
-	MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations"`
-	Updates					[]HealthRecord			`json:"updates"`
+	TreatmentsTried 		[]string 				`json:"treatmentsTried,omitempty"`
+	MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
+	Updates					[]HealthRecord			`json:"updates,omitempty"`
 	CreatedAt 				time.Time				`json:"createdAt"`
 	UpdatedAt 				time.Time				`json:"updatedAt"`
 }

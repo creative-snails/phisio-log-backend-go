@@ -115,7 +115,7 @@ CREATE TABLE symptoms (
 CREATE TABLE symptoms_body_parts (
     symptom_id UUID NOT NULL,
     body_part_id body_part_enum NOT NULL,
-    status SMALLINT NOT NULL DEFAULT 1 CHECK (status BETWEEN 1 AND 4),
+    state SMALLINT NOT NULL DEFAULT 1 CHECK (status BETWEEN 1 AND 4),
     PRIMARY KEY (symptom_id, body_part_id),
     CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id),
     CONSTRAINT fk_body_parts FOREIGN KEY (body_part_id) REFERENCES body_parts(id)

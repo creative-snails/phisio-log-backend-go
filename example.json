@@ -1,0 +1,60 @@
+{
+  "health-records": {
+    "id": 1,
+    "user": "me",
+    "description": "Severe migraine lasting for days",
+    "symptoms": [
+      {
+        "name": "Migraine",
+        "startDate": "2025-02-20",
+        "bodyParts": [{ "id": "head-front", "state": 1 }]
+      },
+      {
+        "name": "Nausea",
+        "startDate": "2025-02-21",
+        "bodyParts": [
+          { "id": "upper-abdomen-left", "state": 1 },
+          { "id": "upper-abdomen-right", "state": 2 }
+        ]
+      }
+    ],
+    "status": {
+      "stage": "in-progress",
+      "severity": "severe",
+      "progression": "stable"
+    },
+    "treatmentsTried": ["Painkillers", "Cold compress", "Hydration"],
+    "medicalConsultations": [
+      {
+        "consultant": "Dr. Smith",
+        "date": "2025-02-22",
+        "diagnosis": "Tension headache",
+        "followUpActions": ["Rest", "Reduce screen time"]
+      },
+      {
+        "consultant": "Dr. Lee",
+        "date": "2025-02-23",
+        "diagnosis": "Migraine",
+        "followUpActions": ["Try new medication", "Monitor symptoms"]
+      }
+    ],
+    "updates": [
+      {
+        "description": "Tried a new painkiller, mild relief",
+        "symptoms": [
+          {
+            "name": "Migraine",
+            "startDate": "2025-02-20",
+            "bodyParts": [{ "id": "head-front", "state": 2 }]
+          }
+        ],
+        "stage": "open",
+        "treatmentsTried": ["Painkillers"],
+        "progression": "improving",
+        "medicalConsultations": []
+      }
+    ],
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "updatedAt": "2025-02-23T15:30:00.000Z"
+  }
+}
