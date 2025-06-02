@@ -1,21 +1,36 @@
 {
   "health-records": {
-    "id": 1,
-    "user": "me",
+    "id": "c0e7d56a-b348-4576-bf3e-3c512b45a786",
     "description": "Severe migraine lasting for days",
     "symptoms": [
       {
         "name": "Migraine",
         "startDate": "2025-02-20",
-        "bodyParts": [{ "key": "head-front", "state": 1 }]
+        "bodyParts": [
+          {
+            "key": "head-front",
+            "state": 1,
+            "id": "604c5719-18d4-48d2-8195-11f5e8a5946a"
+          }
+        ],
+        "id": "2d35a616-4359-492b-ae00-fab60767c013"
       },
       {
         "name": "Nausea",
         "startDate": "2025-02-21",
         "bodyParts": [
-          { "key": "upper-abdomen-left", "state": 1 },
-          { "key": "upper-abdomen-right", "state": 2 }
-        ]
+          {
+            "key": "upper-abdomen-left",
+            "state": 1,
+            "id": "2a9e53d3-8b6f-42b5-9804-b9d69a96bd77"
+          },
+          {
+            "key": "upper-abdomen-right",
+            "state": 2,
+            "id": "c8e85954-abb5-4ab5-9b14-37b27d2076ec"
+          }
+        ],
+        "id": "31dae133-3708-4d50-aebf-15407aa5df96"
       }
     ],
     "status": {
@@ -29,13 +44,15 @@
         "consultant": "Dr. Smith",
         "date": "2025-02-22",
         "diagnosis": "Tension headache",
-        "followUpActions": ["Rest", "Reduce screen time"]
+        "followUpActions": ["Rest", "Reduce screen time"],
+        "id": "4f1b41fa-d048-4457-b559-7af177f5e959"
       },
       {
         "consultant": "Dr. Lee",
         "date": "2025-02-23",
         "diagnosis": "Migraine",
-        "followUpActions": ["Try new medication", "Monitor symptoms"]
+        "followUpActions": ["Try new medication", "Monitor symptoms"],
+        "id": "b158f034-e987-4ef2-8b71-47cb6c11d1c4"
       }
     ],
     "updates": [
@@ -45,13 +62,21 @@
           {
             "name": "Migraine",
             "startDate": "2025-02-20",
-            "bodyParts": [{ "key": "head-front", "state": 2 }]
+            "bodyParts": [
+              {
+                "key": "head-front",
+                "state": 2,
+                "id": "f2183dc8-7de1-4a98-aa77-cff572784315"
+              }
+            ],
+            "id": "1c4a4e58-dafb-4524-abf0-cf7b3e335dbe"
           }
         ],
         "stage": "open",
         "treatmentsTried": ["Painkillers"],
         "progression": "improving",
-        "medicalConsultations": []
+        "medicalConsultations": [],
+        "id": "6a01ee57-999c-48ac-8c41-c50ff25e457a"
       }
     ],
     "createdAt": "2025-02-20T10:00:00.000Z",
