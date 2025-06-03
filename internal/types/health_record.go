@@ -43,8 +43,8 @@ type AffectedPart struct {
 type Symptom struct {
 	ID				string			`json:"id"`
 	Name			string			`json:"name"`
-	StartDate		time.Time		`json:"startDate"`
-	AffectedParts	[]AffectedPart	`json:"affectedParts"`
+	StartDate		string			`json:"startDate"`
+	// AffectedParts	[]AffectedPart	`json:"affectedParts"`
 }
 
 type MedicalConsultation struct {
@@ -59,9 +59,7 @@ type HealthRecord struct {
 	ParentRecordID			string					`json:"parentRecordId,omitempty"`
 	Description 			string		 			`json:"description,omitempty"`
 	Status					Status					`json:"status"`
-	Symptoms				[]Symptom				`json:"symptoms,omitempty"`
 	TreatmentsTried 		[]string 				`json:"treatmentsTried,omitempty"`
-	MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
 	CreatedAt 				time.Time				`json:"createdAt"`
 	UpdatedAt 				time.Time				`json:"updatedAt"`
 }
@@ -73,8 +71,8 @@ type HealthRecordPayload struct {
 	Status					Status					`json:"status"`
 	Symptoms				[]Symptom				`json:"symptoms"`
 	TreatmentsTried 		[]string 				`json:"treatmentsTried,omitempty"`
-	MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
-	Updates					[]HealthRecord			`json:"updates,omitempty"`
-	CreatedAt 				time.Time				`json:"createdAt"`
-	UpdatedAt 				time.Time				`json:"updatedAt"`
+	// MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
+	// Updates					[]HealthRecord			`json:"updates,omitempty"`
+	CreatedAt 				string					`json:"createdAt"`
+	UpdatedAt 				string					`json:"updatedAt"`
 }

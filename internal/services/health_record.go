@@ -25,7 +25,17 @@ func (s *HealthRecordServiceImpl) GetHealthRecord(ctx context.Context, healthRec
 	if err != nil {
 		return db.HealthRecord{}, fmt.Errorf("invalid UUID: %w", err)
 	}
+	
 	return s.queries.GetHealthRecord(ctx, id)
+}
+
+func (s *HealthRecordServiceImpl) GetSymptoms(ctx context.Context, healthRecordId string) ([]db.Symptom, error) {
+	id, err := uuid.Parse(healthRecordId)
+	if err != nil {
+		return []db.Symptom{}, fmt.Errorf("invalid UUID: %w", err)
+	}
+
+	return s.queries.GetSymptoms(ctx, id)
 }
 
 func (s *HealthRecordServiceImpl) CreateHealthRecord(ctx context.Context, req *models.CreateHealthRecordRequest) (db.HealthRecord, error) {

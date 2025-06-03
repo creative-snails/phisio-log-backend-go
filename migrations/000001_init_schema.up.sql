@@ -103,7 +103,7 @@ CREATE TABLE symptoms (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     health_record_id UUID NOT NULL,
     name VARCHAR(200) NOT NULL CHECK (length(name) >= 2),
-    start_date TIMESTAMP,
+    start_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_health_record FOREIGN KEY (health_record_id)
         REFERENCES health_records(id)
         ON DELETE CASCADE

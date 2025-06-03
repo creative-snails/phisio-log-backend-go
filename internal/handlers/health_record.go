@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/prompts"
 	"github.com/creative-snails/phisio-log-backend-go/internal/services"
+	"github.com/creative-snails/phisio-log-backend-go/internal/types"
 	"github.com/robfig/cron/v3"
 )
 
@@ -38,16 +38,46 @@ func NewHandler(healthRecordService services.HealthRecordService) *Handler {
 }
 
 func (h *Handler) GetHealthRecord(w http.ResponseWriter, r *http.Request) {
-	record, err := h.healthRecordService.GetHealthRecord(r.Context(), "4b5959c6-c88e-4c12-8115-e971669dbbe4")
+	healthRecordId := "4b5959c6-c88e-4c12-8115-e971669dbbe4"
+	record, err := h.healthRecordService.GetHealthRecord(r.Context(), healthRecordId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Println(record)
+	symptoms, err := h.healthRecordService.GetSymptoms(r.Context(), healthRecordId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	mappedSymptoms := make([]types.Symptom, len(symptoms))
+
+	for i, symptom := range(symptoms) {
+		mappedSymptoms[i] = types.Symptom{
+			ID: symptom.ID.String(),
+			Name: symptom.Name,
+			StartDate: symptom.StartDate.Time.String(),
+		}
+	}
+
+	healthRecordPayload := types.HealthRecordPayload{
+		ID: record.ID.String(),
+		Description: record.Description,
+		TreatmentsTried: record.TreatmentsTried,
+		Status: types.Status{
+			Stage: types.Stage(record.Stage),
+			Severity: types.Severity(record.Severity),
+			Progression: types.Progression(record.Progression),
+		},
+		Symptoms: mappedSymptoms,
+		CreatedAt: record.CreatedAt.Time.String(),
+		UpdatedAt: record.UpdatedAt.Time.String(),
+	}
+
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(record); err != nil {
+	if err := json.NewEncoder(w).Encode(healthRecordPayload); err != nil {
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 		return
 	}
