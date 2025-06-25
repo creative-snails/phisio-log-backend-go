@@ -50,7 +50,7 @@ type Symptom struct {
 type MedicalConsultation struct {
 	ID				string		`json:"id"`
 	Consultant		string		`json:"consultant"`
-	Date			time.Time	`json:"date"`
+	Date			string	`json:"date"`
 	Diagnosis		string		`json:"diagnosis"`
 	FollowUpActions	[]string	`json:"followUpActions,omitempty"`
 }
@@ -71,7 +71,7 @@ type HealthRecordPayload struct {
 	Status					Status					`json:"status"`
 	Symptoms				[]Symptom				`json:"symptoms"`
 	TreatmentsTried 		[]string 				`json:"treatmentsTried,omitempty"`
-	// MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
+	MedicalConsultations	[]MedicalConsultation	`json:"medicalConsultations,omitempty"`
 	// Updates					[]HealthRecord			`json:"updates,omitempty"`
 	CreatedAt 				string					`json:"createdAt"`
 	UpdatedAt 				string					`json:"updatedAt"`

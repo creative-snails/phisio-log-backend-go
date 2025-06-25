@@ -47,6 +47,15 @@ func (s*HealthRecordServiceImpl) GetAffectedParts(ctx context.Context, symptomId
 	return s.queries.GetAffectedParts(ctx, id)
 }
 
+func (s*HealthRecordServiceImpl) GetMedicalConsultations(ctx context.Context, healthRecordId string) ([]db.MedicalConsultation, error) {
+	id, err := uuid.Parse(healthRecordId)
+	if err != nil {
+		return []db.MedicalConsultation{}, fmt.Errorf("invalid UUID: %w", err)
+	}
+
+	return s.queries.GetMedicalConsultations(ctx, id)
+}
+
 func (s *HealthRecordServiceImpl) CreateHealthRecord(ctx context.Context, req *models.CreateHealthRecordRequest) (db.HealthRecord, error) {
 	if err := req.Validate(); err != nil {
 		return db.HealthRecord{}, fmt.Errorf("validtion failed: %w", err)

@@ -78,6 +78,24 @@ func (h *Handler) GetHealthRecord(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	medicalConsultations, err := h.healthRecordService.GetMedicalConsultations(r.Context(), healthRecordId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	mappedMedicalConsultations := make([]types.MedicalConsultation, len(medicalConsultations))
+
+	for i, medicalConsulation := range(medicalConsultations) {
+		mappedMedicalConsultations[i] = types.MedicalConsultation{
+			ID: medicalConsulation.ID.String(),
+			Consultant: medicalConsulation.Consultant,
+			Date: medicalConsulation.Date.String(),
+			Diagnosis: medicalConsulation.Diagnosis,
+			FollowUpActions: medicalConsulation.FollowUpActions,
+		}
+	}
+
 	healthRecordPayload := types.HealthRecordPayload{
 		ID: record.ID.String(),
 		Description: record.Description,
@@ -88,6 +106,7 @@ func (h *Handler) GetHealthRecord(w http.ResponseWriter, r *http.Request) {
 			Progression: types.Progression(record.Progression),
 		},
 		Symptoms: mappedSymptoms,
+		MedicalConsultations: mappedMedicalConsultations,
 		CreatedAt: record.CreatedAt.Time.String(),
 		UpdatedAt: record.UpdatedAt.Time.String(),
 	}
