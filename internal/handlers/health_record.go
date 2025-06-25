@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/creative-snails/phisio-log-backend-go/internal/prompts"
@@ -54,10 +55,26 @@ func (h *Handler) GetHealthRecord(w http.ResponseWriter, r *http.Request) {
 	mappedSymptoms := make([]types.Symptom, len(symptoms))
 
 	for i, symptom := range(symptoms) {
+		affectedParts, err := h.healthRecordService.GetAffectedParts(r.Context(), symptom.ID.String())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		mappedAffectedParts := make([]types.AffectedPart, len(affectedParts))
+
+		for j, affectedPart := range(affectedParts) {
+			mappedAffectedParts[j] = types.AffectedPart{
+				Key: string(affectedPart.BodyPart),
+				State: strconv.Itoa(int(affectedPart.State)),
+			}
+		}
+
 		mappedSymptoms[i] = types.Symptom{
 			ID: symptom.ID.String(),
 			Name: symptom.Name,
 			StartDate: symptom.StartDate.Time.String(),
+			AffectedParts: mappedAffectedParts,
 		}
 	}
 

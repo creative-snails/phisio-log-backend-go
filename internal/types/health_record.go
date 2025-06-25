@@ -44,7 +44,7 @@ type Symptom struct {
 	ID				string			`json:"id"`
 	Name			string			`json:"name"`
 	StartDate		string			`json:"startDate"`
-	// AffectedParts	[]AffectedPart	`json:"affectedParts"`
+	AffectedParts	[]AffectedPart	`json:"affectedParts"`
 }
 
 type MedicalConsultation struct {
